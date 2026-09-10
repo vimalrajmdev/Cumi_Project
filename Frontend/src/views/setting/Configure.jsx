@@ -316,7 +316,7 @@ const Configure = ({ auth }) => {
           </Col>
         }
 
-        {hasViewPermission('AC006') &&
+        {/* {hasViewPermission('AC006') &&
           <Col xl={4} lg={6} md={6} sm={6} xs={12}>
             <Card style={CardStyle}>
               <Link className=' d-flex  text-decoration-none text-dark ' to='/Configure/UOMMaster'
@@ -336,7 +336,7 @@ const Configure = ({ auth }) => {
               </Link>
             </Card>
           </Col>
-        }
+        } */}
 
         {/* {hasViewPermission('AC007') &&
           <Col xl={4} lg={6} md={6} sm={6} xs={12}>

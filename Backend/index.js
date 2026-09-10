@@ -6566,6 +6566,74 @@ server.post('/MouldMaster', async (req, res) => {
   }
 });
 
+
+// ======================== MouldMapping CRUD ========================
+server.post('/MouldMappingConfig', async (req, res) => {
+  try {
+    const {
+      mode = '',
+      MapID = '',
+      M_ID = '',
+      MP_ID = '',
+      MP_IDs,
+      CreatedBy = '',
+      branchid = 0,
+      BranchAccess = ''
+    } = req.body;
+
+    const pool = await connect();
+
+    // ---- Bulk map: M_ID + array of MP_IDs ----
+    if (mode === 'I') {
+      const ids = Array.isArray(MP_IDs) && MP_IDs.length > 0 ? MP_IDs : [MP_ID];
+      let mappedCount = 0;
+      const skipped = [];
+
+      for (const mid of ids) {
+        try {
+          const r = await pool.request()
+            .input('mode', sql.NVarChar, 'I')
+            .input('MapID', sql.Int, null)
+            .input('M_ID', sql.Int, M_ID ? parseInt(M_ID, 10) : null)
+            .input('MP_ID', sql.Int, mid ? parseInt(mid, 10) : null)
+            .input('CreatedBy', sql.NVarChar, CreatedBy || null)
+            .input('BranchId', sql.Int, branchid || 1)
+            .input('BranchAccess', sql.NVarChar, BranchAccess || null)
+            .execute('[Masters].[SP_MouldMapping]');
+
+          const row = r.recordset && r.recordset[0];
+          if (row && row.Count === 1) {
+            skipped.push({ MP_ID: mid, MappedTo: row.MappedMasterCode });
+          } else {
+            mappedCount++;
+          }
+        } catch (rowErr) {
+          console.error('Mould mapping row error:', rowErr);
+          skipped.push({ MP_ID: mid, MappedTo: 'DB Error' });
+        }
+      }
+      return res.status(200).json({ mappedCount, skipped });
+    }
+
+    // ---- All other modes: GetMaster / GetMouldPart / FetchMapping / D / DAllMaster / Check ----
+    const result = await pool.request()
+      .input('mode', sql.NVarChar, mode || '')
+      .input('MapID', sql.Int, MapID ? parseInt(MapID, 10) : null)
+      .input('M_ID', sql.Int, M_ID ? parseInt(M_ID, 10) : null)
+      .input('MP_ID', sql.Int, MP_ID ? parseInt(MP_ID, 10) : null)
+      .input('CreatedBy', sql.NVarChar, CreatedBy || null)
+      .input('BranchId', sql.Int, branchid || 1)
+      .input('BranchAccess', sql.NVarChar, BranchAccess || null)
+      .execute('[Masters].[SP_MouldMapping]');
+
+    res.status(200).json(result.recordset);
+
+  } catch (err) {
+    console.error('Error on Mould Mapping:', err);
+    res.status(500).json({ message: 'Error on Mould Mapping' });
+  }
+});
+
 // ======================== FG MASTER EXCEL UPLOAD ========================
 server.post('/FGMasterUploadData', upload.single('file'), async (req, res) => {
   try {

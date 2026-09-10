@@ -815,8 +815,11 @@ const MouldTypeMaster = ({ auth }) => {
             if (response.status === 200) {
                 setDeletevisible(false);
                 SetEditid(null);
-                await fetchData();
-                swal({ text: 'Deleted Successfully', icon: 'success' });
+                // await fetchData();
+                {
+                    Swal.fire({ title: 'Deleted Successfully', icon: 'success', confirmButtonText: 'Done' });
+                    fetchData();
+                }
             }
         } catch (err) {
             console.error(err);
