@@ -3,10 +3,10 @@ require('dotenv').config();
 // Database connection settings come from Backend/.env (DB_SERVER, DB_NAME,
 // DB_USER, DB_PASSWORD, DB_PORT). The fallbacks keep local dev working.
 const config = {
-    server: process.env.DB_SERVER || 'localhost',
-    database: process.env.DB_NAME || 'Cumi',
-    user: process.env.DB_USER || 'sa',
-    password: process.env.DB_PASSWORD || 'Welcomesql',
+    server: process.env.DB_SERVER || 'smartconnect.org.in',
+    database: process.env.DB_NAME || 'CumiFG',
+    user: process.env.DB_USER || 'rspmdevuser',
+    password: process.env.DB_PASSWORD || 'Dev#12345',
     options: {
         encrypt: false,
         trustServerCertificate: true,
