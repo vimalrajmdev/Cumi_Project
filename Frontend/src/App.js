@@ -69,8 +69,8 @@ function App() {
   const [pagedata, setPagedata] = useState(secureLocalStorage.getItem("pageData"))
   const [ipAddress, setIPAddress] = useState(null)
   const API_URL = getConfig().REACT_APP_API_URL;
+  
   useEffect(() => {
-
     const localData = () => {
       setAuth(secureLocalStorage.getItem("userData"))
       setPagedata(secureLocalStorage.getItem("pageData"))
@@ -79,7 +79,6 @@ function App() {
       try {
         const response = await fetch(`${API_URL}/get-lan-ip`)
         const data = await response.json()
-        // console.log('LAN IP Address:', data.ip)
         setIPAddress(data.ip)
       } catch (error) {
         console.error('Error fetching LAN IP:', error)
@@ -89,7 +88,6 @@ function App() {
     fetchLANIP();
     localData();
   }, [])
-
 
   return (
     <HistoryRouter history={history} future={futureConfig}>

@@ -1,131 +1,63 @@
-// import React, { createContext, useState, useContext } from 'react';
+// import React, { createContext, useState, useCallback } from 'react';
+// import {
+//   getWorkOrders,
+//   updateWorkOrderStatus,
+//   addProductionEntry as apiAddProductionEntry,
+//   getProductionEntries as apiGetProductionEntries,
+// } from '../views/Production/productionApi';
 
-// const ProductionContext = createContext();
-
-// export const useProduction = () => useContext(ProductionContext);
+// export const ProductionContext = createContext(null);
 
 // export const ProductionProvider = ({ children }) => {
-//     const [workOrders, setWorkOrders] = useState([]);
-//     const [productionEntries, setProductionEntries] = useState([]);
+//   const [workOrders, setWorkOrders] = useState([]);
+//   const [productionEntries, setProductionEntries] = useState([]);
+//   const [loading, setLoading] = useState(false);
 
-//     const computeStatus = (orderQty, balanceQty) => {
-//         if (Number(balanceQty) <= 0) return 'Completed';
-//         if (Number(balanceQty) === Number(orderQty)) return 'Pending';
-//         return 'In Progress';
-//     };
+//   const refreshWorkOrders = useCallback(async () => {
+//     setLoading(true);
+//     try {
+//       const data = await getWorkOrders();
+//       setWorkOrders(data || []);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
 
-//     const addWorkOrder = (wo) => {
-//         // Auto-generate a unique ID for internal tracking
-//         const newId = `WO-${Date.now()}`;
-//         const newWO = {
-//             id: newId,
-//             poNumber: wo.poNumber,
-//             itemName: wo.itemName,
-//             orderQuantity: Number(wo.orderQuantity),
-//             balanceQuantity: Number(wo.orderQuantity), // Initially, balance equals order qty
-//             status: computeStatus(wo.orderQuantity, wo.orderQuantity)
-//         };
-//         setWorkOrders((prev) => [...prev, newWO]);
-//     };
+//   const refreshProductionEntries = useCallback(async (woNo) => {
+//     setLoading(true);
+//     try {
+//       const data = await apiGetProductionEntries(woNo);
+//       setProductionEntries(data || []);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
 
-//     const addProductionEntry = (entry) => {
-//         const completedQty = Number(entry.completedQuantity);
-        
-//         // Add to production entries
-//         setProductionEntries((prev) => [
-//             { ...entry, completedQuantity: completedQty }, 
-//             ...prev
-//         ]);
+//   const addProductionEntry = useCallback(async (entry) => {
+//     const result = await apiAddProductionEntry(entry);
+//     await refreshWorkOrders();
+//     return result;
+//   }, [refreshWorkOrders]);
 
-//         // Update the corresponding Work Order balance and status using the generated ID
-//         setWorkOrders((prev) =>
-//             prev.map((wo) => {
-//                 if (wo.id === entry.woId) {
-//                     const newBalance = wo.balanceQuantity - completedQty;
-//                     return {
-//                         ...wo,
-//                         balanceQuantity: newBalance,
-//                         status: computeStatus(wo.orderQuantity, newBalance)
-//                     };
-//                 }
-//                 return wo;
-//             })
-//         );
-//     };
+//   const changeWorkOrderStatus = useCallback(async (woNo, status) => {
+//     const result = await updateWorkOrderStatus(woNo, status);
+//     await refreshWorkOrders();
+//     return result;
+//   }, [refreshWorkOrders]);
 
-//     return (
-//         <ProductionContext.Provider value={{ workOrders, addWorkOrder, productionEntries, addProductionEntry }}>
-//             {children}
-//         </ProductionContext.Provider>
-//     );
+//   return (
+//     <ProductionContext.Provider
+//       value={{
+//         workOrders,
+//         productionEntries,
+//         loading,
+//         refreshWorkOrders,
+//         refreshProductionEntries,
+//         addProductionEntry,
+//         changeWorkOrderStatus,
+//       }}
+//     >
+//       {children}
+//     </ProductionContext.Provider>
+//   );
 // };
-
-
-import React, { createContext, useState, useContext } from 'react';
-
-const ProductionContext = createContext();
-
-export const useProduction = () => useContext(ProductionContext);
-
-export const ProductionProvider = ({ children }) => {
-    const [workOrders, setWorkOrders] = useState([]);
-    const [productionEntries, setProductionEntries] = useState([]);
-    const [replaceHistory, setReplaceHistory] = useState([]); // NEW: For Replace History
-
-    const computeStatus = (orderQty, balanceQty) => {
-        if (Number(balanceQty) <= 0) return 'Completed';
-        if (Number(balanceQty) === Number(orderQty)) return 'Pending';
-        return 'In Progress';
-    };
-
-    const addWorkOrder = (wo) => {
-        const newId = `WO-${Date.now()}`;
-        const newWO = {
-            id: newId,
-            poNumber: wo.poNumber,
-            itemName: wo.itemName,
-            orderQuantity: Number(wo.orderQuantity),
-            balanceQuantity: Number(wo.orderQuantity),
-            status: computeStatus(wo.orderQuantity, wo.orderQuantity)
-        };
-        setWorkOrders((prev) => [...prev, newWO]);
-    };
-
-    const addProductionEntry = (entry) => {
-        const completedQty = Number(entry.completedQuantity);
-        setProductionEntries((prev) => [{ ...entry, completedQuantity: completedQty }, ...prev]);
-
-        setWorkOrders((prev) =>
-            prev.map((wo) => {
-                if (wo.id === entry.woId) {
-                    const newBalance = wo.balanceQuantity - completedQty;
-                    return {
-                        ...wo,
-                        balanceQuantity: newBalance,
-                        status: computeStatus(wo.orderQuantity, newBalance)
-                    };
-                }
-                return wo;
-            })
-        );
-    };
-
-    // NEW: Function to save replacement history
-    const addReplaceHistory = (record) => {
-        setReplaceHistory((prev) => [
-            { 
-                ...record, 
-                id: Date.now(), 
-                replacedDate: new Date().toLocaleDateString(), 
-                createdDate: new Date().toLocaleDateString() 
-            },
-            ...prev
-        ]);
-    };
-
-    return (
-        <ProductionContext.Provider value={{ workOrders, addWorkOrder, productionEntries, addProductionEntry, replaceHistory, addReplaceHistory }}>
-            {children}
-        </ProductionContext.Provider>
-    );
-};

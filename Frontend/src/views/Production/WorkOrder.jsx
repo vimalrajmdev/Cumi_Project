@@ -1,118 +1,165 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-import { useProduction } from '../../context/ProductionContext';
+import React, { useState, useEffect } from 'react';
+import { Card, Form, Button, Table, Alert, Spinner, Row, Col } from 'react-bootstrap';
+import { getWorkOrders, saveWorkOrder, deleteWorkOrder } from '../../services/productionApi';
 
 const WorkOrder = () => {
-    const { workOrders, addWorkOrder } = useProduction(); 
+  const [form, setForm] = useState({ wo_number: '', po_number: '', item_name: '', item_qty: 0 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [workOrders, setWorkOrders] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await getWorkOrders();
+      setWorkOrders(res.data || []);
+      setError(''); // Clear error if fetch is successful
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      setError('Failed to fetch work orders. Please check if the database table exists.');
+    }
+  };
+
+  useEffect(() => { 
+    fetchData(); 
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(''); 
+    setSuccess('');
     
-    const [form, setForm] = useState({
-        poNumber: '',
-        itemName: '',
-        orderQuantity: ''
-    });
+    if (!form.wo_number || !form.item_name || !form.item_qty) {
+      setError('Please fill all required fields.');
+      setLoading(false);
+      return;
+    }
 
-    const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+    try {
+      const payload = {
+        wo_number: form.wo_number,
+        po_number: form.po_number,
+        item_name: form.item_name,
+        item_qty: parseInt(form.item_qty, 10) || 0,
+        mode: 'INSERT'
+      };
 
-    const handleOk = () => {
-        if (!form.poNumber.trim() || !form.itemName.trim() || !form.orderQuantity.trim()) {
-            Swal.fire('Missing Fields', 'Please fill in PO Number, Item Name, and Item Quantity.', 'warning');
-            return;
-        }
+      const response = await saveWorkOrder(payload);
+      
+      setSuccess(response.data.message || 'Work Order created successfully!');
+      setForm({ wo_number: '', po_number: '', item_name: '', item_qty: 0 });
+      await fetchData(); // Refresh table
+      
+    } catch (err) {
+      console.error("Save Error:", err);
+      setError(err.response?.data?.error || 'Failed to save work order.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        addWorkOrder({
-            poNumber: form.poNumber.trim(),
-            itemName: form.itemName.trim(),
-            orderQuantity: form.orderQuantity
-        });
+  return (
+    <div className="container mt-4">
+      <h3>Work Order</h3>
+      {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
+      {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
+      
+      <Card className="mb-4 shadow-sm">
+        <Card.Body>
+          <Form onSubmit={handleSubmit}>
+            <Row>
+              <Col md={3}>
+                <Form.Group className="mb-3">
+                  <Form.Label>WO Number</Form.Label>
+                  <Form.Control name="wo_number" value={form.wo_number} onChange={handleChange} required />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3">
+                  <Form.Label>PO Number</Form.Label>
+                  <Form.Control name="po_number" value={form.po_number} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Item Name</Form.Label>
+                  <Form.Control name="item_name" value={form.item_name} onChange={handleChange} required />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Item Qty</Form.Label>
+                  <Form.Control type="number" name="item_qty" value={form.item_qty} onChange={handleChange} required />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button variant="primary" type="submit" disabled={loading}>
+              {loading ? <Spinner as="span" animation="border" size="sm" /> : 'OK'}
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
 
-        Swal.fire('Added!', 'Work Order has been created.', 'success');
-        setForm({ poNumber: '', itemName: '', orderQuantity: '' });
-    };
-
-    const getStatusBadge = (status) => {
-        if (status === 'Completed') return <span className="badge bg-success p-2">{status}</span>;
-        if (status === 'In Progress') return <span className="badge bg-primary p-2">{status}</span>;
-        return <span className="badge bg-warning text-dark p-2">{status}</span>;
-    };
-
-    return (
-        <div className="mt-4">
-            <div className="card">
-                <div className="card-header" style={{ background: '#106FB2' }}>
-                    <h4 className="mb-0 text-white d-flex align-items-center gap-2">
-                        <i className="bi bi-file-earmark-text"></i> Work Order Creation
-                    </h4>
-                </div>
-                <div className="card-body py-4">
-                    <div className="row g-3 mb-3">
-                        <div className="col-md-4 col-6">
-                            <label className="form-label fw-bold">PO Number <span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" value={form.poNumber} onChange={handleChange('poNumber')} />
-                        </div>
-                        <div className="col-md-4 col-6">
-                            <label className="form-label fw-bold">Item Name / Code <span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" value={form.itemName} onChange={handleChange('itemName')} />
-                        </div>
-                        <div className="col-md-4 col-6">
-                            <label className="form-label fw-bold">Item Quantity (Order Qty) <span className="text-danger">*</span></label>
-                            <input type="number" min="1" className="form-control" value={form.orderQuantity} onChange={handleChange('orderQuantity')} />
-                        </div>
-                        <div className="col-md-4 col-6">
-                            <label className="form-label fw-bold">Balance Quantity</label>
-                            <input type="text" className="form-control" disabled value={form.orderQuantity || 0} />
-                        </div>
-                        <div className="col-md-4 col-6">
-                            <label className="form-label fw-bold">Status</label>
-                            <input type="text" className="form-control" disabled value={form.orderQuantity > 0 ? 'Pending' : ''} />
-                        </div>
-                    </div>
-
-                    <button className="btn btn-primary" onClick={handleOk}>
-                        <i className="bi bi-check2-circle me-2"></i> OK
-                    </button>
-
-                    <div className="table-responsive mt-4">
-                        <table className="table table-bordered table-hover align-middle">
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>S.No</th>
-                                    <th>PO Number</th>
-                                    <th>Item Code</th>
-                                    <th>Order Quantity</th>
-                                    <th>Balance Quantity</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {workOrders.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="7" className="text-center text-muted py-4">No Work Orders created yet.</td>
-                                    </tr>
-                                ) : (
-                                    workOrders.map((wo, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>{wo.poNumber}</td>
-                                            <td>{wo.itemName}</td>
-                                            <td>{wo.orderQuantity}</td>
-                                            <td>{wo.balanceQuantity}</td>
-                                            <td>{getStatusBadge(wo.status)}</td>
-                                            <td>
-                                                <button className="btn btn-sm btn-outline-secondary" disabled>
-                                                    View
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+      <Card className="shadow-sm">
+        <Card.Header>Work Order List</Card.Header>
+        <Card.Body>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>WO Number</th>
+                <th>PO Number</th>
+                <th>Item Code</th>
+                <th>Item Name</th>
+                <th>Order Qty</th>
+                <th>Balance Qty</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workOrders && workOrders.length > 0 ? (
+                workOrders.map((wo, index) => (
+                  <tr key={wo.id}>
+                    <td>{index + 1}</td>
+                    <td>{wo.wo_number}</td>
+                    <td>{wo.po_number}</td>
+                    <td>{wo.item_code}</td>
+                    <td>{wo.item_name}</td>
+                    <td>{wo.order_qty}</td>
+                    <td>{wo.balance_qty}</td>
+                    <td>
+                      <span className={`badge bg-${wo.status === 'Completed' ? 'success' : 'warning'}`}>
+                        {wo.status}
+                      </span>
+                    </td>
+                    <td>
+                      <Button size="sm" variant="outline-danger" onClick={async () => { 
+                        await deleteWorkOrder(wo.id); 
+                        fetchData(); 
+                      }}>
+                        <i className="bi bi-trash"></i>
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="9" className="text-center text-muted">No Work Orders Found</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
+    </div>
+  );
 };
 
 export default WorkOrder;

@@ -1,58 +1,57 @@
-import React from 'react';
-import { useProduction } from '../../context/ProductionContext';
+import React, { useContext, useEffect } from 'react';
+import {
+  CCard, CCardBody, CCardHeader, CTable, CTableHead, CTableRow,
+  CTableHeaderCell, CTableBody, CTableDataCell, CSpinner,
+} from '@coreui/react';
+import { ProductionContext } from '../../context/ProductionContext';
 
 const ReplaceHistory = () => {
-    const { replaceHistory } = useProduction();
+  const { productionEntries, loading, refreshProductionEntries } = useContext(ProductionContext);
 
-    return (
-        <div className="mt-4">
-            <div className="card">
-                <div className="card-header" style={{ background: '#106FB2' }}>
-                    <h4 className="mb-0 text-white d-flex align-items-center gap-2">
-                        <i className="bi bi-clock-history"></i> Replace History
-                    </h4>
-                </div>
-                <div className="card-body py-4">
-                    <div className="table-responsive">
-                        <table className="table table-bordered table-hover align-middle">
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>PO Number</th>
-                                    <th>Item Type</th>
-                                    <th>Old Part</th>
-                                    <th>New Part</th>
-                                    <th>Replaced By</th>
-                                    <th>Replaced Date</th>
-                                    <th>Replaced Qty</th>
-                                    <th>Created Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {replaceHistory.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="8" className="text-center text-muted py-4">No Replacement History found.</td>
-                                    </tr>
-                                ) : (
-                                    replaceHistory.map((rec, index) => (
-                                        <tr key={index}>
-                                            <td>{rec.poNumber}</td>
-                                            <td>{rec.itemType}</td>
-                                            <td className="text-danger">{rec.oldPart}</td>
-                                            <td className="text-success">{rec.newPart}</td>
-                                            <td>{rec.replacedBy}</td>
-                                            <td>{rec.replacedDate}</td>
-                                            <td>{rec.replacedQty}</td>
-                                            <td>{rec.createdDate}</td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    refreshProductionEntries(); // no woNo = fetch all
+  }, [refreshProductionEntries]);
+
+  return (
+    <CCard>
+      <CCardHeader>Production History</CCardHeader>
+      <CCardBody>
+        {loading ? (
+          <div className="text-center py-4"><CSpinner /></div>
+        ) : (
+          <CTable striped hover responsive>
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell>WO No</CTableHeaderCell>
+                <CTableHeaderCell>Date</CTableHeaderCell>
+                <CTableHeaderCell>Produced</CTableHeaderCell>
+                <CTableHeaderCell>Rejected</CTableHeaderCell>
+                <CTableHeaderCell>Remarks</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              {productionEntries.map((e) => (
+                <CTableRow key={e.id}>
+                  <CTableDataCell>{e.woNo}</CTableDataCell>
+                  <CTableDataCell>{new Date(e.createdDate).toLocaleString()}</CTableDataCell>
+                  <CTableDataCell>{e.producedQty}</CTableDataCell>
+                  <CTableDataCell>{e.rejectedQty}</CTableDataCell>
+                  <CTableDataCell>{e.remarks}</CTableDataCell>
+                </CTableRow>
+              ))}
+              {productionEntries.length === 0 && (
+                <CTableRow>
+                  <CTableDataCell colSpan={5} className="text-center text-muted">
+                    No history yet
+                  </CTableDataCell>
+                </CTableRow>
+              )}
+            </CTableBody>
+          </CTable>
+        )}
+      </CCardBody>
+    </CCard>
+  );
 };
 
 export default ReplaceHistory;

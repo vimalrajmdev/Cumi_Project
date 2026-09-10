@@ -97,6 +97,50 @@ const _nav = [
     icon: <FaUserShield className="fs-6" />,
   },
 
+  {
+    component: CNavGroup,
+    name: "Production",
+    screenid: 'PD001' || 'PD002' || 'PD003' || 'PD004',
+    icon: <BsBoxes className="fs-6" />,
+    items: [
+
+      // {
+      //   component: CNavItem,
+      //   name: "QR generate",
+      //   screenid: 'PD001',
+      //   to: "/Production/QRCodeCreation",
+      //   icon: <BsJournals className="ms-2" />,
+      // },
+      {
+        component: CNavItem,
+        name: "Work Order",
+        screenid: 'PD002',
+        to: "/Production/WorkOrder",
+        icon: <BsJournals className="ms-2" />,
+      },
+      // {
+      //   component: CNavItem,
+      //   name: 'Picking',
+      //   to: '/Production/Picking',
+      //   icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>, // Or use your existing icon component like <cil-cart />
+      // },
+      {
+        component: CNavItem,
+        name: "Production Entry",
+        screenid: 'PD003',
+        to: "/Production/ProductionEntry",
+        icon: <BsFileCheck className="ms-2" />,
+      },
+      {
+        component: CNavItem,
+        title: "Replace History",
+        screenid: 'PD004',
+        to: "/Production/ReplaceHistory",
+        icon: "Replaced-history",
+      }
+    ],
+  },
+
   // {
   //   component: CNavItem,
   //   name: "Employee Details",
@@ -113,7 +157,7 @@ const _nav = [
     icon: <BsSliders className="" />,
     screenid: 'ST001'
   },
-  
+
   // // Manage Asset
   // {
   //   component: CNavGroup,
@@ -256,20 +300,25 @@ const _nav = [
   //   screenid: 'GF001',
   //   to: "/API/GeoFence",
   //   icon: <BsGeo className="fs-6" />,
-    // items: [
-    //   {
-    //     component: CNavItem,
-    //     name: "Geo Fence",
-    //     screenid: 'GF001',
-    //     to: "/API/GeoFence",
-    //     icon: <BsGeo className="ms-2" />,
-    //   }
-    // ]
-  
+  // items: [
+  //   {
+  //     component: CNavItem,
+  //     name: "Geo Fence",
+  //     screenid: 'GF001',
+  //     to: "/API/GeoFence",
+  //     icon: <BsGeo className="ms-2" />,
+  //   }
+  // ]
+
+
+
+
+
+
   {
     component: CNavItem,
-    name:"Mould Mapping",
-    to:"/MouldMapping",
+    name: "Mould Mapping",
+    to: "/MouldMapping",
     screenid: 'RS001',
     icon: <BsLink className="fs-5" />
   },
@@ -280,7 +329,7 @@ const _nav = [
     screenid: 'RS001',
     icon: <BsBellFill className="fs-6" />
   },
-   {
+  {
     component: CNavItem,
     name: "Scheduler Settings",
     to: "/SchedulerSettings",

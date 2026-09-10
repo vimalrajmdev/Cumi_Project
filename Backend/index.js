@@ -6752,6 +6752,331 @@ server.post('/FGMasterUploadData', upload.single('file'), async (req, res) => {
 });
 
 
+// ===== Work Order (QR-based) =====
+
+// server.post('/GeneratePONumber', async (req, res) => {
+//   try {
+//     const { branchid } = req.body;
+//     const query = db.q`SELECT COUNT(*) AS cnt FROM WorkOrderMaster WHERE branchid = ${branchid}`;
+//     const response = await db.query(query);
+//     const next = (response.recordset[0].cnt || 0) + 1;
+//     const poNo = `PO-${branchid}-${Date.now().toString().slice(-6)}-${String(next).padStart(4, '0')}`;
+//     res.status(200).json({ poNo });
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// server.post('/CreateWorkOrder', async (req, res) => {
+//   try {
+//     const { poNo, item, itemQty, createdby, branchid } = req.body;
+
+//     if (!poNo || !item || !itemQty) {
+//       return res.status(400).json({ error: 'poNo, item and itemQty are required' });
+//     }
+
+//     const countQuery = db.q`SELECT COUNT(*) AS cnt FROM WorkOrderMaster WHERE branchid = ${branchid}`;
+//     const countResponse = await db.query(countQuery);
+//     const woNo = `WO-${String((countResponse.recordset[0].cnt || 0) + 1).padStart(4, '0')}`;
+
+//     const insertQuery = db.q`INSERT INTO WorkOrderMaster (WONo, PONo, Item, ItemQty, Status, CreatedBy, branchid)
+//       VALUES (${woNo}, ${poNo}, ${item}, ${itemQty}, 'Pending', ${createdby}, ${branchid})`;
+
+//     const response = await db.query(insertQuery);
+
+//     if (response.rowsAffected && response.rowsAffected[0] > 0) {
+//       res.status(200).json({ message: 'Work Order created', woNo, poNo, item, itemQty, status: 'Pending' });
+//     } else {
+//       res.status(500).json({ error: 'Failed to create Work Order' });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// server.post('/GetWorkOrders', async (req, res) => {
+//   try {
+//     const { branchid, BranchAccess } = req.body;
+//     const query = BranchAccess === 'All'
+//       ? db.q`SELECT id, WONo AS woNo, PONo AS poNo, Item AS item, ItemQty AS itemQty,
+//                Status AS status, CreatedBy AS createdBy, CreatedDate AS createdDate
+//              FROM WorkOrderMaster ORDER BY id DESC`
+//       : db.q`SELECT id, WONo AS woNo, PONo AS poNo, Item AS item, ItemQty AS itemQty,
+//                Status AS status, CreatedBy AS createdBy, CreatedDate AS createdDate
+//              FROM WorkOrderMaster WHERE branchid = ${branchid} ORDER BY id DESC`;
+//     const response = await db.query(query);
+//     res.status(200).json({ send: response.recordset });
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// server.post('/UpdateWorkOrderStatus', async (req, res) => {
+//   try {
+//     const { woNo, status, branchid } = req.body;
+//     const query = db.q`UPDATE WorkOrderMaster SET Status = ${status} WHERE WONo = ${woNo} AND branchid = ${branchid}`;
+//     const response = await db.query(query);
+//     res.status(200).json({ message: 'Status updated', rowsAffected: response.rowsAffected });
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// ===== Production Entry =====
+
+// server.post('/AddProductionEntry', async (req, res) => {
+//   try {
+//     const { woNo, producedQty, rejectedQty, remarks, createdby, branchid } = req.body;
+
+//     if (!woNo || producedQty === undefined) {
+//       return res.status(400).json({ error: 'woNo and producedQty are required' });
+//     }
+
+//     const insertQuery = db.q`INSERT INTO ProductionEntryMaster (WONo, ProducedQty, RejectedQty, Remarks, CreatedBy, branchid)
+//       VALUES (${woNo}, ${producedQty}, ${rejectedQty || 0}, ${remarks || ''}, ${createdby}, ${branchid})`;
+//     const response = await db.query(insertQuery);
+
+//     if (response.rowsAffected && response.rowsAffected[0] > 0) {
+//       // move the Work Order into In Progress the first time an entry is logged
+//       await db.query(db.q`UPDATE WorkOrderMaster SET Status = 'In Progress' WHERE WONo = ${woNo} AND branchid = ${branchid} AND Status = 'Pending'`);
+//       res.status(200).json({ message: 'Production entry saved' });
+//     } else {
+//       res.status(500).json({ error: 'Failed to save production entry' });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// server.post('/GetProductionEntries', async (req, res) => {
+//   try {
+//     const { woNo, branchid } = req.body;
+//     const query = woNo
+//       ? db.q`SELECT id, WONo AS woNo, ProducedQty AS producedQty, RejectedQty AS rejectedQty,
+//                Remarks AS remarks, CreatedBy AS createdBy, CreatedDate AS createdDate
+//              FROM ProductionEntryMaster WHERE WONo = ${woNo} AND branchid = ${branchid} ORDER BY id DESC`
+//       : db.q`SELECT id, WONo AS woNo, ProducedQty AS producedQty, RejectedQty AS rejectedQty,
+//                Remarks AS remarks, CreatedBy AS createdBy, CreatedDate AS createdDate
+//              FROM ProductionEntryMaster WHERE branchid = ${branchid} ORDER BY id DESC`;
+//     const response = await db.query(query);
+//     res.status(200).json({ send: response.recordset });
+//   } catch (err) {
+//     console.error(err);
+//     logErrorToFile(err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+
+
+// ======================== WORK ORDER API ========================
+// ===== Work Order =====
+
+server.post('/WorkOrderList', async (req, res) => {
+  try {
+    const response = await db.query(`SELECT * FROM WorkOrderMaster ORDER BY id DESC`);
+    res.status(200).json(response.recordset || []);
+  } catch (err) {
+    console.error('WorkOrderList error:', err);
+    logErrorToFile('WorkOrderList error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+server.post('/WorkOrderSave', async (req, res) => {
+  try {
+    const { id, wo_number, po_number, item_code, item_name, item_qty, mode } = req.body;
+    const qty = parseInt(item_qty, 10) || 0;
+
+    if (!wo_number || !item_name) {
+      return res.status(400).json({ error: 'wo_number and item_name are required' });
+    }
+
+    if (mode === 'UPDATE') {
+      if (!id) {
+        return res.status(400).json({ error: 'id is required for UPDATE' });
+      }
+      const query = db.q`UPDATE WorkOrderMaster 
+                         SET wo_number = ${wo_number}, 
+                             po_number = ${po_number || ''}, 
+                             item_code = ${item_code || ''}, 
+                             item_name = ${item_name || ''}, 
+                             order_qty = ${qty}, 
+                             balance_qty = ${qty} - completed_qty,
+                             updated_at = GETDATE() 
+                         WHERE id = ${id}`;
+      const response = await db.query(query);
+
+      if (response.rowsAffected && response.rowsAffected[0] > 0) {
+        return res.status(200).json({ message: 'Work Order updated successfully' });
+      }
+      return res.status(404).json({ error: 'Work Order not found' });
+    } else {
+      // Duplicate WO number check
+      const dupCheck = await db.query(
+        db.q`SELECT COUNT(*) AS cnt FROM WorkOrderMaster WHERE wo_number = ${wo_number}`
+      );
+      if (dupCheck.recordset[0].cnt > 0) {
+        return res.status(400).json({ error: 'WO Number already exists' });
+      }
+
+      const query = db.q`INSERT INTO WorkOrderMaster 
+                         (wo_number, po_number, item_code, item_name, order_qty, completed_qty, balance_qty, [status], created_at, updated_at) 
+                         VALUES (${wo_number}, ${po_number || ''}, ${item_code || ''}, ${item_name || ''}, ${qty}, 0, ${qty}, 'In Progress', GETDATE(), GETDATE())`;
+      const response = await db.query(query);
+
+      if (response.rowsAffected && response.rowsAffected[0] > 0) {
+        return res.status(200).json({ message: 'Work Order created successfully' });
+      }
+      return res.status(500).json({ error: 'Insert failed' });
+    }
+  } catch (err) {
+    console.error('WorkOrderSave error:', err);
+    logErrorToFile('WorkOrderSave error:', err);
+    res.status(500).json({ error: err.message || 'Internal Server Error' });
+  }
+});
+
+server.post('/WorkOrderDelete', async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).json({ error: 'id is required' });
+    }
+    const query = db.q`DELETE FROM WorkOrderMaster WHERE id = ${id}`;
+    const response = await db.query(query);
+
+    if (response.rowsAffected && response.rowsAffected[0] > 0) {
+      return res.status(200).json({ message: 'Work Order deleted successfully' });
+    }
+    return res.status(404).json({ error: 'Work Order not found' });
+  } catch (err) {
+    console.error('WorkOrderDelete error:', err);
+    logErrorToFile('WorkOrderDelete error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ===== Production Entry =====
+
+server.post('/ProductionEntryList', async (req, res) => {
+  try {
+    const response = await db.query(`SELECT * FROM ProductionEntryMaster ORDER BY id DESC`);
+    res.status(200).json(response.recordset || []);
+  } catch (err) {
+    console.error('ProductionEntryList error:', err);
+    logErrorToFile('ProductionEntryList error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+server.post('/ProductionEntrySave', async (req, res) => {
+  try {
+    const { wo_number, produced_qty, rejected_qty, remarks, createdby } = req.body;
+    const produced = parseInt(produced_qty, 10) || 0;
+    const rejected = parseInt(rejected_qty, 10) || 0;
+
+    if (!wo_number || !produced_qty) {
+      return res.status(400).json({ error: 'wo_number and produced_qty are required' });
+    }
+
+    const insertQuery = db.q`INSERT INTO ProductionEntryMaster (wo_number, produced_qty, rejected_qty, remarks, created_by, created_at) 
+                             VALUES (${wo_number}, ${produced}, ${rejected}, ${remarks || ''}, ${createdby || ''}, GETDATE())`;
+    const response = await db.query(insertQuery);
+
+    if (response.rowsAffected && response.rowsAffected[0] > 0) {
+      // roll produced qty into the Work Order and recompute balance/status
+      await db.query(db.q`UPDATE WorkOrderMaster 
+                          SET completed_qty = completed_qty + ${produced},
+                              balance_qty = order_qty - (completed_qty + ${produced}),
+                              [status] = CASE WHEN order_qty - (completed_qty + ${produced}) <= 0 THEN 'Completed' ELSE 'In Progress' END,
+                              updated_at = GETDATE()
+                          WHERE wo_number = ${wo_number}`);
+      return res.status(200).json({ message: 'Production entry saved successfully' });
+    }
+    return res.status(500).json({ error: 'Insert failed' });
+  } catch (err) {
+    console.error('ProductionEntrySave error:', err);
+    logErrorToFile('ProductionEntrySave error:', err);
+    res.status(500).json({ error: err.message || 'Internal Server Error' });
+  }
+});
+
+server.post('/GetEmployeesDropdown', async (req, res) => {
+  try {
+    const { branchid } = req.body;
+    const query = branchid
+      ? db.q`SELECT Id AS id, Empid, FirstName, LastName, Department 
+             FROM EmployeeMaster 
+             WHERE BranchId = ${branchid} AND Status = 'A' 
+             ORDER BY FirstName`
+      : db.q`SELECT Id AS id, Empid, FirstName, LastName, Department 
+             FROM EmployeeMaster 
+             WHERE Status = 'A' 
+             ORDER BY FirstName`;
+    const response = await db.query(query);
+    res.status(200).json(response.recordset || []);
+  } catch (err) {
+    console.error('GetEmployeesDropdown error:', err);
+    logErrorToFile('GetEmployeesDropdown error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+server.post('/ProductionEntrySave', async (req, res) => {
+  try {
+    const { wo_id, wo_number, pdf_number, completed_qty, operator_id, operator_name } = req.body;
+    const qty = parseInt(completed_qty, 10) || 0;
+
+    if (!wo_id || !pdf_number || !qty || !operator_id) {
+      return res.status(400).json({ error: 'wo_id, pdf_number, completed_qty and operator_id are required' });
+    }
+
+    // resolve wo_number server-side too, in case the client didn't send it
+    const woRow = await db.query(db.q`SELECT wo_number, order_qty, completed_qty FROM WorkOrderMaster WHERE id = ${wo_id}`);
+    if (!woRow.recordset.length) {
+      return res.status(404).json({ error: 'Work Order not found' });
+    }
+    const wo = woRow.recordset[0];
+    const resolvedWoNumber = wo_number || wo.wo_number;
+
+    const insertQuery = db.q`INSERT INTO ProductionEntryMaster 
+      (wo_id, wo_number, pdf_number, completed_qty, operator_id, operator_name, created_at)
+      VALUES (${wo_id}, ${resolvedWoNumber}, ${pdf_number}, ${qty}, ${operator_id}, ${operator_name || ''}, GETDATE())`;
+    const response = await db.query(insertQuery);
+
+    if (response.rowsAffected && response.rowsAffected[0] > 0) {
+      await db.query(db.q`UPDATE WorkOrderMaster 
+        SET completed_qty = completed_qty + ${qty},
+            balance_qty = order_qty - (completed_qty + ${qty}),
+            [status] = CASE WHEN order_qty - (completed_qty + ${qty}) <= 0 THEN 'Completed' ELSE 'In Progress' END,
+            updated_at = GETDATE()
+        WHERE id = ${wo_id}`);
+      return res.status(200).json({ message: 'Production Entry saved successfully' });
+    }
+    return res.status(500).json({ error: 'Insert failed' });
+  } catch (err) {
+    console.error('ProductionEntrySave error:', err);
+    logErrorToFile('ProductionEntrySave error:', err);
+    res.status(500).json({ error: err.message || 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+
 // Last-resort safety net: a rejected promise that escapes a handler must
 // never kill the whole API process (Node exits on unhandled rejections).
 process.on('unhandledRejection', (reason) => {

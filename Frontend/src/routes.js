@@ -1,13 +1,14 @@
 import { element } from "prop-types";
 import React from "react";
 
-
+import WorkOrder from './views/Production/WorkOrder';
+import ProductionEntry from './views/Production/ProductionEntry';
 // Basic need for template
 const DashAnalytics = React.lazy(() => import("../src/views/dashboard/index"))
 const SuperAdmin = React.lazy(() => import('./views/branchmaster/Superusercreate'))
 const Branches = React.lazy(() => import('./views/branchmaster/config/Branches'))
 
-const Allusers = React.lazy(() => import('./views/usercreation/Allusers'))
+// const Allusers = React.lazy(() => import('./views/usercreation/Allusers'))
 const Adduser = React.lazy(() => import('./views/usercreation/Adduser'))
 const Edituser = React.lazy(() => import('./views/usercreation/Edituser'))
 const Userrole = React.lazy(() => import('./views/usercreation/config/Userrole'))
@@ -18,7 +19,7 @@ const Userrole = React.lazy(() => import('./views/usercreation/config/Userrole')
 // Configure > Department. Files in .backup_20260826/deleted/.
 
 const Userauth = React.lazy(() => import('./views/userauth/Userauth'))
-const Screenmaster = React.lazy(() => import('./views/userauth/config/Screenmaster'))
+// const Screenmaster = React.lazy(() => import('./views/userauth/config/Screenmaster'))
 
 const Logdetails = React.lazy(() => import('./views/logdetails/Logdetails'))
 
@@ -32,15 +33,15 @@ const Generalsetting = React.lazy(() => import('./views/setting/Generalsetting')
 const NewRegister = React.lazy(() => import("./views/ManageAsset/ManageAssetTAble/RegisterAssetTable"));
 const AddRegister = React.lazy(() => import("./views/ManageAsset/AddRegister"));
 const RegisterDetails = React.lazy(() => import("./views/ManageAsset/RegisterDetails"));
-const MaptoEmp = React.lazy(() => import("./views/ManageAsset/WithRFID"));
-const UnmapAsset = React.lazy(() => import("./views/ManageAsset/WithOutRFID"));
+// const MaptoEmp = React.lazy(() => import("./views/ManageAsset/WithRFID"));
+// const UnmapAsset = React.lazy(() => import("./views/ManageAsset/WithOutRFID"));
 const PreMaintenance = React.lazy(() => import("./views/Maintenance/PreMaintenance_test"));
 const ScrapRegister = React.lazy(() => import("./views/Maintenance/ScrabRegister"));
 const PostMaintenance = React.lazy(() => import("./views/Maintenance/PostMaintenance_test"));
 const InternalTransfer = React.lazy(() => import("./views/Movement/InternalTransfer"));
 const ExternalTransfer = React.lazy(() => import("./views/Movement/ExternalTransfer"));
 const InwardAsset = React.lazy(() => import("./views/Movement/InwardAsset"));
-const InventoryReport = React.lazy(() => import("./views/Reports/InventoryReport"));
+// const InventoryReport = React.lazy(() => import("./views/Reports/InventoryReport"));
 const AssetAudit = React.lazy(() => import("./views/AssetAudit/AssetAudit"));
 const AuditConsolidate = React.lazy(() => import("./views/Reports/AuditConsolidateReport"));
 const AllReports = React.lazy(() => import("./views/Reports/AllReports"));
@@ -105,20 +106,27 @@ const ReminderTypesMaster = React.lazy(() => import("./views/Configure/RemiderTy
 const ReminderSettings = React.lazy(() => import("./views/ReminderSettings/ReminderSettings"));
 const SchedulerSettings = React.lazy(() => import("./views/SchedulerSetting/SchedulerSetting"));
 
+// const QRCodeCreation = React.lazy(() => import("./views/Production/QRCodeCreation"));
+
+
+const ReplaceHistory = React.lazy(() => import("./views/Production/ReplaceHistory"));
+// const Picking = React.lazy(() => import("./views/Production/Picking"));
+
+
 const routes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/dashboard", name: "Dashboard", element: DashAnalytics },
   { path: "/branchmaster/userperusercreate", name: "Super Admin", element: SuperAdmin },
   { path: "/branchmaster/config/branches", name: "Branches", element: Branches },
   { path: "/usercreation", name: "User Creation" },
-  { path: "/usercreation/allusers", name: "All Users", element: Allusers },
+  // { path: "/usercreation/allusers", name: "All Users", element: Allusers },
   { path: "/usercreation/adduser", name: "Add User", element: Adduser },
   { path: "/usercreation/edituser", name: "Edit User", element: Edituser },
   { path: "/usercreation/config", name: "User Config" },
   { path: "/usercreation/config/userrole", name: "User Role", element: Userrole },
   { path: "/userauthenticate", name: "User Previleges" },
   { path: "/userauthenticate/userauth", name: "User Previlege", element: Userauth },
-  { path: "/userauthenticate/config/screenmaster", name: "Screenmaster", element: Screenmaster },
+  // { path: "/userauthenticate/config/screenmaster", name: "Screenmaster", element: Screenmaster },
 
 
   { path: "/log", name: "Login Details" },
@@ -134,8 +142,8 @@ const routes = [
   { path: "/ManageAsset/NewRegister", name: "New Register", element: NewRegister },
   { path: "/ManageAsset/AddRegister", name: "New Register", element: AddRegister },
   { path: "/ManageAsset/RegisterDetais", name: "Registered Assets", element: RegisterDetails },
-  { path: "/ManageAsset/WithRFID", name: "With RFID", element: MaptoEmp },
-  { path: "/ManageAsset/WithOutRFID", name: "Without RFID", element: UnmapAsset },
+  // { path: "/ManageAsset/WithRFID", name: "With RFID", element: MaptoEmp },
+  // { path: "/ManageAsset/WithOutRFID", name: "Without RFID", element: UnmapAsset },
 
   // Asset Maintenance
   { path: "/Maintanance", name: "Maintenance" },
@@ -200,7 +208,7 @@ const routes = [
   { path: "/Reports/ExternalTransferReport", name: "External Transfer Report", element: ExternalTransferReport },
   { path: "/Reports/MaintenanceReport", name: "Under-Maintenance Report", element: MaintenanceReport },
   { path: "/Reports/PostMaintenanceReport", name: "Maintenance Done Report", element: PostMaintenanceReport },
-  { path: "/Reports/AuditReport", name: "Audit Report", element: InventoryReport },
+  // { path: "/Reports/AuditReport", name: "Audit Report", element: InventoryReport },
   { path: "/Reports/AuditConsolidateReport", name: "Audit Report", element: AuditConsolidate },
   { path: "/Reports/ScrapReport", name: "Scrap Report", element: ScrapReport },
   { path: "/Reports/PaymentHistoryReport", name: "Payment History Report", element: PaymentHistoryReport },
@@ -226,8 +234,11 @@ const routes = [
   { path: '/EmployeeMaster', name: "Employee Master", element: EmployeeMaster },
 
   // Movement History
-  { path: '/Movement/MovementHistory', name: "Movement History", element: MovementHistory }
-
+//  { path: '/Movement/MovementHistory',  name: "Movement Histroy", element : MovementHistroy },  
+{ path: "/Production/WorkOrder", name: "Work Order", element: WorkOrder },
+  { path: "/Production/ProductionEntry", name: "Production Entry", element: ProductionEntry },
+  { path: "/Production/ReplaceHistory", name: "Replace History", element: ReplaceHistory },
+  //  { path: "/Production/Picking", name: "Picking", element: Picking }
 ];
 
 export default routes;
