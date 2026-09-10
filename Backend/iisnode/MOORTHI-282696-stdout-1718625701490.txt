@@ -1,0 +1,3 @@
+D:\RSPM\React Application\Document-tracking_updated_v1\backend\PrnFile.prn   \\DESKTOP-062Q6KU\Zebra ZD621R (300 dpi) - ZPL
+Server is connected \\.\pipe\d5005b86-dfbf-414e-b63c-4ace8a829aa2
+Connected to the database

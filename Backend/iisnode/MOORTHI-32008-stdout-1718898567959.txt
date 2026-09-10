@@ -1,0 +1,11 @@
+http://localhost:5000/PrnFile.prn   \\DESKTOP-062Q6KU\Zebra ZD621R (300 dpi) - ZPL
+Server is connected \\.\pipe\a02f8cfd-274e-46e3-b69c-7a5f809ac687
+Connected to the database
+192.168.208.4
+exec dbo.sp_Documenttypemaster '' ,'','','','S','1' 
+exec dbo.sp_DocumentLocationmaster '' ,'','','','S','1' 
+exec dbo.sp_DocumentRackmaster '' ,'','','','S','1'
+exec dbo.sp_Documentrowmaster '' ,'','','','S','1' 
+192.168.208.4
+Email sent successfully.
+Email sent successfully.

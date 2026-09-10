@@ -1,0 +1,65 @@
+SNo,assetid,AssetNo,AssetDesc,FloorName,AreaName,CategoryName,SubCategoryName,RFID,AssetGroupId,AssetGroupName
+1,120,100120,Oak Veneer,8th Floor,Collab Type 02,Furniture,Table,E200470F0C4060231058010F,37,Aline Table
+2,149,100149,Oak Veneer,8th Floor,PB0801,Furniture,Table,E200470E6A0060230634010D,37,Aline Table
+3,150,100150,Oak Veneer,8th Floor,Seating,Furniture,Table,E200470B62606023D5BA010B,37,Aline Table
+4,266,100266,European Oak,8th Floor,Collab Type 01a,Furniture,Table,E200470E4000602303940111,57,Sage
+5,294,100294,European Oak,8th Floor,Collab Type 02,Furniture,Table,E200471269B0602311760109,57,Sage
+6,302,100302,Oak E2100,8th Floor,Achiote ,Furniture,Table,E200470DA6806023F9FC0110,43,Custom
+7,428,100428,European Oak,8th Floor,Collab Type 01a,Furniture,Table,E20047040710602360050112,57,Sage
+8,459,100459,Oak E2100,8th Floor,Muttuga,Furniture,Table,E20047023F40602343880112,43,Custom
+9,460,100460,Oak E2100,8th Floor,Pongamia,Furniture,Table,E200470A7DC06023C770010E,43,Custom
+10,461,100461,Oak E2100,8th Floor,Dhatripala,Furniture,Table,E200470CC2606023EBBA010E,43,Custom
+11,462,100462,Oak E2100,8th Floor,Mandara,Furniture,Table,E200470E4B1060230445010F,43,Custom
+12,6543,106362,ATLAS (sit-to-stand)-Large,8th Floor,PB0805,Work Station Furniture,Work-Station-Furniture,E2801191A5040073637C34D4,62,Workstation Table
+13,6545,106364,ATLAS (sit-to-stand)-Large,8th Floor,PB0802,Work Station Furniture,Work-Station-Furniture,E2801191A5040073590CE4EE,62,Workstation Table
+14,6548,106367,ATLAS (sit-to-stand)-Large,8th Floor,PB0803,Work Station Furniture,Work-Station-Furniture,E2801191A5040073637AC0F4,62,Workstation Table
+15,6551,106370,ATLAS (sit-to-stand)-Large,8th Floor,PB0804,Work Station Furniture,Work-Station-Furniture,E2801191A5040073590F132E,62,Workstation Table
+16,6625,106444,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E200470553E0602374D20112,65,Meeting Room-Chair
+17,6626,106445,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E2004706DC9060238D5D010A,65,Meeting Room-Chair
+18,6627,106446,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E200470AA1E06023C9B20111,65,Meeting Room-Chair
+19,6628,106447,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E200470556C0602375000118,65,Meeting Room-Chair
+20,6630,106449,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E2004706C59060238BED010F,65,Meeting Room-Chair
+21,6631,106450,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E200470D85A06023F7EE0110,65,Meeting Room-Chair
+22,6632,106451,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E2004714EA5060236E390111,65,Meeting Room-Chair
+23,6634,106453,Task chair - Armless,8th Floor,PB0802,Furniture,Chair,E20047116350602335C9010F,65,Meeting Room-Chair
+24,6635,106454,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E20047161A10602381350115,65,Meeting Room-Chair
+25,6637,106456,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E2004710B12060232AA60111,65,Meeting Room-Chair
+26,6639,106458,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E2004704C64060236BF8010A,65,Meeting Room-Chair
+27,6642,106461,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E200470E6650602305F9010D,65,Meeting Room-Chair
+28,6643,106462,Task chair - Armless,8th Floor,PB0804,Furniture,Chair,E200470A80406023C798010F,65,Meeting Room-Chair
+29,6644,106463,Task chair - Armless,8th Floor,Nimbe,Furniture,Chair,E200470B69C06023D630010D,65,Meeting Room-Chair
+30,6645,106464,Task chair - Armless,8th Floor,PB0805,Furniture,Chair,E20047056740602376080111,65,Meeting Room-Chair
+31,6646,106465,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E20047116D2060233666010D,65,Meeting Room-Chair
+32,6647,106466,Task chair - Armless,8th Floor,Achiote ,Furniture,Chair,E2004706D17060238CAB0110,65,Meeting Room-Chair
+33,6648,106467,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E2004702CDD060234C710109,65,Meeting Room-Chair
+34,6649,106468,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470F2A606023123A010E,65,Meeting Room-Chair
+35,6650,106469,Task chair - Armless,8th Floor,Halasu,Furniture,Chair,E20047041580602360EC0108,65,Meeting Room-Chair
+36,6651,106470,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470C2B306023E2470110,65,Meeting Room-Chair
+37,6652,106471,Task chair - Armless,8th Floor,Mandara,Furniture,Chair,E200470C06B06023DFFF010D,65,Meeting Room-Chair
+38,6653,106472,Task chair - Armless,8th Floor,Mandara,Furniture,Chair,E20047139BC060235950010F,65,Meeting Room-Chair
+39,6654,106473,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E20047040B706023604B010E,65,Meeting Room-Chair
+40,6655,106474,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E20047157AA06023773E0113,65,Meeting Room-Chair
+41,6657,106476,Task chair - Armless,8th Floor,Muttuga,Furniture,Chair,E2004704082060236016010C,65,Meeting Room-Chair
+42,6658,106477,Task chair - Armless,8th Floor,Pongamia,Furniture,Chair,E20047114ED060233481010F,65,Meeting Room-Chair
+43,6659,106478,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470FD2E060231CC20113,65,Meeting Room-Chair
+44,6660,106479,Task chair - Armless,8th Floor,Pongamia,Furniture,Chair,E200470FEF7060231E8B010B,65,Meeting Room-Chair
+45,6661,106480,Task chair - Armless,8th Floor,Muttuga,Furniture,Chair,E2004709DE906023BD7D010B,65,Meeting Room-Chair
+46,6662,106481,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470DA8506023FA190113,65,Meeting Room-Chair
+47,6663,106482,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E20047161B40602381480115,65,Meeting Room-Chair
+48,6664,106483,Task chair - Armless,8th Floor,Dhatripala,Furniture,Chair,E2004704C22060236BB6010E,65,Meeting Room-Chair
+49,6665,106484,Task chair - Armless,8th Floor,Muttuga,Furniture,Chair,E200470C1F006023E184010A,65,Meeting Room-Chair
+50,6666,106485,Task chair - Armless,8th Floor,Dhatripala,Furniture,Chair,E200470E69E0602306320109,65,Meeting Room-Chair
+51,6668,106487,Task chair - Armless,8th Floor,Achiote ,Furniture,Chair,E2004709D5806023BCEC010B,65,Meeting Room-Chair
+52,6669,106488,Task chair - Armless,8th Floor,Mandara,Furniture,Chair,E200471620F0602381A3010C,65,Meeting Room-Chair
+53,6670,106489,Task chair - Armless,8th Floor,Pongamia,Furniture,Chair,E20047085B406023A548010A,65,Meeting Room-Chair
+54,6671,106490,Task chair - Armless,8th Floor,Dhatripala,Furniture,Chair,E200470D7E506023F779010E,65,Meeting Room-Chair
+55,6672,106491,Task chair - Armless,8th Floor,Achiote ,Furniture,Chair,E20047062530602381E7010E,65,Meeting Room-Chair
+56,6673,106492,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470FD23060231CB70111,65,Meeting Room-Chair
+57,6674,106493,Task chair - Armless,8th Floor,Laburnum,Furniture,Chair,E200470FD0F060231CA3010B,65,Meeting Room-Chair
+58,17780,107337,Oak Veneer,8th Floor,Recreation / Pantry,Furniture,Table,E200470C06E06023E002010B,37,Aline Table
+59,17781,107338,Oak Veneer,8th Floor,Recreation / Pantry,Furniture,Table,E200470CE0106023ED950113,37,Aline Table
+60,17784,107340,Oak Veneer,8th Floor,Collab Type 02,Furniture,Table,E20047055ED0602375810110,52,Little Friend 
+61,17785,107341,Oak Veneer,8th Floor,Collab Type 02,Furniture,Table,E2004714D71060236D050112,52,Little Friend 
+62,17786,107342,European Oak,8th Floor,Recreation / Pantry,Furniture,Table,E20047056C0060237654010C,57,Sage
+63,17788,107344,LG/CISCO,8th Floor,PB0804,AVCN,AV System,E28011700000021AC1A3314E,82,AV SYSTEM
+64,17794,107350,Vidar 733,8th Floor,Private Room,Furniture,Chair,E200470571A0602376AE0112,13,Noom Series 10

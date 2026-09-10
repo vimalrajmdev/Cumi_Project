@@ -1,0 +1,998 @@
+// Here you can add other styles
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+  /* Changes the color of the grid text */
+  --ag-foreground-color: rgb(14, 68, 145);
+  /* Changes the color of the grid background */
+  // --ag-background-color: rgb(241, 247, 255);
+  /* Changes the header color of the top row */
+  // --ag-header-background-color: rgb(228, 237, 250);
+  /* Changes the hover color of the row*/
+  // --ag-row-hover-color: rgb(30, 31, 32);
+}
+
+.rag-red {
+  background-color: #cc222244;
+}
+
+.darkHeader .ag-header-cell-label {
+  color: white;
+  /* Change text color */
+  background-color: #333;
+  /* Change background color */
+}
+
+.client_badge {
+  position: absolute;
+  top: 25px;
+  left: -10px;
+  translate: -50%
+}
+
+
+.card-purple-blue {
+  // background: linear-gradient(45deg, #fab80e, #f76b1c);
+  background: linear-gradient(45deg, rgba(#0327c6, 1) 0%, rgba(#62a3f8dc, 1) 100%);
+  box-shadow: 0 5px 20px rgba(#da690c, .3);
+
+  //   // background: linear-gradient(45deg, #fab80e, #f76b1c);
+  //   background: linear-gradient(45deg, rgba(#faa70e, 1) 0%, rgba(#ddae2bdc, 1) 100%);
+  //   box-shadow: 0 5px 20px rgba(#fab80e, .3);
+
+}
+
+
+.card-red-pink {
+  // background-image: linear-gradient(45deg, rgba(#d5d811d0, 1) 0%, rgba(#a6d81e9f, 1) 100%);
+  // box-shadow: 0 5px 20px rgba(#a8d30d, .3);
+
+  // background-image: linear-gradient(45deg, rgba(#d63838ab, 1) 0%, rgba(#dd5f5f91, 1) 100%);
+  // box-shadow: 0 5px 20px rgba(#f90202, .3);
+
+  background-image: linear-gradient(45deg, rgba(#a64fe0, 1) 0%, rgba(#8e3bc5, 1) 100%);
+  box-shadow: 0 5px 20px rgba(#A13BC5, .3);
+}
+
+// .card-green-blue {
+
+// }
+
+.card-green-blue {
+  // background: linear-gradient(298deg, rgba(#03967a, 1) 0%, rgba(#12d488, 1) 100%);
+  background: linear-gradient(45deg, rgba(#1ce085, 1) 0%, rgba(#11e4af, 1) 100%);
+  box-shadow: 0 5px 20px rgba(#1dd69f, .3);
+  //  background: linear-gradient(45deg, rgba(#e039c4, 1) 0%, rgba(#e411c19f, 1) 100%);
+  // box-shadow: 0 5px 20px rgba(#e411c19f, .3);
+
+}
+
+.card-blue-pink {
+  background-image: linear-gradient(45deg, rgba(#2e50e7, 1) 0%, rgba(#3d5ef0, 1) 100%);
+  box-shadow: 0 5px 20px rgba(#011052, .3);
+
+}
+
+.card-blue {
+  // background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+  // background-image: linear-gradient(to top, #15012c 0%, #330867 100%);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgb(0, 0, 0);
+  // background: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 100%), radial-gradient(at top center, rgba(255,255,255,0.40) 0%, rgba(0,0,0,0.40) 120%) #989898;
+  background-blend-mode: multiply, multiply;
+  // background-image: linear-gradient(45deg, rgba(#2e50e7, 1) 0%, rgba(#3d5ef0, 1) 100%);
+  // box-shadow: 0 5px 20px rgba(#011052, .3);
+
+}
+
+.glowing-badge {
+  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.8);
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.8);
+  }
+
+  to {
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 1);
+  }
+}
+
+// .custom-breadcrumb-item {
+//   color: #fff !important;
+// }
+
+// .custom-breadcrumb-item:hover {
+//   color: #ccc !important;
+// }
+
+
+.styled-box {
+  position: relative;
+  overflow: hidden;
+  /* Hide overflow to contain pseudo-elements */
+  background-color: whitesmoke;
+  /* Main background color */
+}
+
+.styled-box::before,
+.styled-box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  /* Adjust width as needed */
+  transition: transform 0.4s ease;
+  /* Optional: Smooth transition */
+  // z-index: -1; /* Ensure pseudo-elements are behind main content */
+}
+
+.styled-box::before {
+  top: 0;
+  left: 0;
+  background-image: url(../assets/images/Logo_RSPM.png);
+  /* First background image */
+  background-position: 10% 10%;
+  background-repeat: no-repeat;
+  background-color: #8a2be2;
+  /* Blue color */
+  padding-top: 10px;
+  background-size: 20%;
+  /* Adjust size as needed */
+  border-top-right-radius: 35%;
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 10%;
+  box-shadow: 0px 0px 5px 10px #d4d3d3;
+}
+
+.styled-box::after {
+  left: 0;
+  // background-image: url(../assets/images/LoginLogo.png);
+  /* Second background image */
+  background-position: center;
+  /* Position of the second image */
+  background-repeat: no-repeat;
+  background-size: 60%;
+  /* Adjust size as needed */
+  border-radius: 0;
+  /* No border radius, or adjust as needed */
+  z-index: 1;
+}
+
+.styled-box .content {
+  position: relative;
+  z-index: 2;
+  /* Ensure content is above pseudo-elements */
+  padding: 20px;
+  color: #ffffff;
+  /* Text color */
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.custom-shadow {
+  box-shadow: 0 0 20px rgba(141, 138, 138, 0.966);
+  /* Example: Red shadow with 50% opacity */
+}
+
+.styled-box1 {
+  position: relative;
+  overflow: hidden;
+  /* Hide overflow to contain pseudo-elements */
+  background-color: whitesmoke;
+  /* Main background color */
+}
+
+.styled-box1::before,
+.styled-box1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  /* Adjust width as needed */
+  transition: transform 0.4s ease;
+  /* Optional: Smooth transition */
+  // z-index: -1; /* Ensure pseudo-elements are behind main content */
+}
+
+.styled-box1::before {
+  top: 0;
+  left: 0;
+  background-image: url(../assets/images/Logo_RSPM.png);
+  /* First background image */
+  background-position: 10% 10%;
+  background-repeat: no-repeat;
+  background-color: #8a2be2;
+  /* Blue color */
+  padding-top: 10px;
+  background-size: 20%;
+  /* Adjust size as needed */
+  border-top-right-radius: 35%;
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 10%;
+  box-shadow: 0px 0px 5px 10px #d4d3d3;
+}
+
+.styled-box1::after {
+  left: 0;
+  // background-image: url(../assets/images/BG4.png); /* Second background image */
+  background-position: center;
+  /* Position of the second image */
+  background-repeat: no-repeat;
+  background-size: 60%;
+  /* Adjust size as needed */
+  border-radius: 0;
+  /* No border radius, or adjust as needed */
+  z-index: 1;
+}
+
+.styled-box1 .content {
+  position: relative;
+  z-index: 2;
+  /* Ensure content is above pseudo-elements */
+  padding: 20px;
+  color: #ffffff;
+  /* Text color */
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 25s linear infinite;
+}
+
+.marquee1 {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+}
+
+.marquee-content1 {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 25s linear infinite;
+}
+
+@keyframes marquee {
+
+  0%,
+  10% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+
+
+.nav-link {
+  color: #000;
+  /* Default text color */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Smooth transition */
+}
+
+/* For active NavLink */
+// .nav-link-active {
+//   // style={{  }}
+//   // background: linear-gradient (to right, #F2F2F7) !important;
+//   /* Change to your desired active background color */
+
+//   // color: #fff !important;
+//   /* Change to your desired active text color */
+// }
+
+/* For hover NavLink */
+// .nav-link:hover {
+//   // background: linear-gradient(to right, #F2F2F7)!important;
+//   /* Change to your desired hover background color */
+//   // color: #fff !important;
+//   /* Change to your desired hover text color */
+// }
+
+// .nav-link:hover .nav-icon,
+// .nav-link-active .nav-icon {
+//   color: #fff !important;
+//   /* Change this to your desired icon hover/active color */
+// }
+
+.custom-app-header {
+  background-color: #29166F !important;
+  /* Replace with your desired background color */
+  color: #ffffff;
+  /* Replace with your desired text color */
+}
+
+
+
+
+#car {
+  background-color: #09e264bb
+}
+
+
+// #C1:hover {
+//   transform: scale(1.1);
+//   box-shadow: 0 0 20px linear-gradient(to right, #F2F2F7);
+// }
+
+.LoginBackground {
+  // background-image: url('../assets/images/AssetTracking_background.png');
+  background-repeat: no-repeat;
+  background-position: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  min-width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.widget-icon-blue {
+  color: rgba(174, 55, 221, 0.829);
+}
+
+* {
+  font-family: Helvetica;
+  // font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  // font-style: italic;
+}
+
+// #card8{
+//   background-color: #000;
+// }
+
+#card1 {
+  background-color: #5b94ff;
+}
+
+#card2 {
+  background-color: #186d6d;
+}
+
+#card3 {
+  background-color: #772a3b;
+}
+
+#card4 {
+  background-color: #9c9420d8;
+}
+
+#card5 {
+  background-color: #24c0abd8;
+}
+
+#card6 {
+  background-color: #892be2b0;
+}
+
+// .ag-theme-quartz {
+//   --ag-header-column-resize-handle-color: rgb(126, 46, 132);
+// }
+
+
+// .First::first-letter { 
+//   color: #ff0000;
+//   font-size: 175%;
+//   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+
+// }
+
+.First {
+  color: #29166F;
+  /* Color for the rest of the text */
+  font-size: 100%;
+  /* Normal font size for the rest */
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.First::first-letter {
+  color: #ff0000;
+  /* Color for the first letter */
+  font-size: 175%;
+  /* Larger size for the first letter */
+}
+
+td,
+th {
+  text-align: left;
+  padding: 8px;
+
+}
+
+tr:nth-child(even) {
+  background-color: white;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+
+@media print {
+
+  header,
+  footer {
+    display: none !important;
+    /* Hides header and footer */
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-size: 12pt;
+    background-color: white;
+  }
+
+  .container {
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: left;
+  }
+
+  .border {
+    border: 1px solid black;
+  }
+
+  .text-end {
+    text-align: right;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  // @page {
+  //   margin: 0;
+  //   size: auto;
+  // }
+}
+
+.green-row {
+  background-color: lightgreen;
+}
+
+.orange-row {
+  background-color: orange;
+}
+
+.red-row {
+  background-color: lightcoral;
+}
+
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+  --ag-foreground-color: rgb(49, 69, 245);
+  --ag-background-color: rgb(249, 245, 227);
+  --ag-header-foreground-color: rgb(204, 245, 172);
+  --ag-header-background-color: rgb(100, 35, 253);
+  --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
+  --ag-header-column-resize-handle-color: rgb(64, 3, 114);
+
+  --ag-font-size: 17px;
+  --ag-font-family: monospace;
+}
+
+// *{
+//   border: 1px solid black;
+// }
+
+// Grandient for Dashboard
+
+.forprimary {
+  // background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+  background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+}
+
+.forinfo {
+  // background-image: linear-gradient(-225deg, #9EFBD3 0%, #57E9F2 48%, #45D4FB 100%);
+  // background-image: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+  background-image: linear-gradient(90.2deg, rgb(68, 216, 216) 0.3%, rgba(0, 213, 255, 1) 99.8%);
+
+}
+
+.fordanger {
+  background-image: linear-gradient(to bottom, #ff0844 0%, #fc6161 100%);
+}
+
+.forwarning {
+  background-image: linear-gradient(to right, #f8d300 0%, #f9d423 100%);
+}
+
+.forsuccess {
+  // background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+  background-image: linear-gradient(to bottom, #03492b 0%, #3cba92 100%);
+
+}
+
+.forsecondary {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%), radial-gradient(at top center, rgba(255, 255, 255, 0.40) 0%, rgba(0, 0, 0, 0.40) 120%) #989898;
+  background-blend-mode: multiply, multiply;
+}
+
+.fordark {
+  background-image: linear-gradient(to right, #434343 0%, black 100%);
+}
+
+.center-align {
+  padding-top: 13px;
+}
+
+.active-tab {
+  background-color: #007bff !important;
+  /* your desired color */
+  color: white !important;
+  border-radius: 5px;
+}
+
+.badge-glow {
+  animation: pulse 1.5s infinite;
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.8);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.6);
+  }
+
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(220, 53, 69, 1);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.6);
+  }
+}
+
+.btn-hover-effect:hover,
+.btn-hover-effect:focus {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+
+// Vertical Time Line CSS
+@media (max-width: 768px) {
+  .vertical-timeline::before {
+    left: 10px !important;
+  }
+
+  .vertical-timeline-element-content {
+    margin-left: 0 !important;
+    padding: 15px !important;
+  }
+
+  h5 {
+    font-size: 1rem !important;
+  }
+
+  p,
+  span {
+    font-size: 0.85rem !important;
+  }
+}
+
+//sidebar dropdown colour
+// .sidebar-nav {
+//   --cui-sidebar-nav-group-indicator-color: #6d6363;
+// }
+
+.sidebar-nav .nav-group-toggle::after {
+  width: 20px;
+  height: 15px;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  background-color: #000000;
+}
+
+.sidebar-nav .nav-group.show .nav-group-toggle::after {
+  background-color: #000000 !important;
+}
+
+
+
+.toggle-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: start;
+}
+
+.toggle-option-modern {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-option-modern input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-label-modern {
+  display: inline-flex;
+  align-items: start;
+  justify-content: start;
+  padding: 0.3rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #070707;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine animation effect */
+.toggle-label-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-25deg);
+  transition: all 0.4s ease;
+}
+
+.toggle-option-modern:hover .toggle-label-modern::before {
+  left: 125%;
+}
+
+/* Active (Selected) State */
+.toggle-option-modern.active .toggle-label-modern {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #212121, #6d6b6b);
+  box-shadow: 0 6px 20px rgba(91, 91, 91, 0.5);
+  transform: translateY(-2px) scale(1.20);
+}
+
+/* Hover */
+.toggle-option-modern:not(.active):hover .toggle-label-modern {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Focus Accessibility */
+.toggle-option-modern input:focus-visible+.toggle-label-modern {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .toggle-label-modern {
+    padding: 0.6rem 1.4rem;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* From Uiverse.io by GreyD097 */
+.button-box {
+  position: relative;
+  width: 12rem;
+  height: 5rem;
+  display: flex;
+}
+
+.button-box .button {
+  width: 3.2rem;
+  height: 3.2rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  cursor: pointer;
+  border: 3px solid #311703;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+  opacity: 0.85;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.button-box .button .icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+  transition: 0.25s;
+}
+
+.button-box .button:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(90deg);
+  z-index: 30;
+  background: #ff7f50;
+}
+
+.button-box .button:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(-115deg);
+  z-index: 40;
+  background: #ffd700;
+}
+
+.button-box .button:nth-child(6) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+  z-index: 50;
+  background: #019b98;
+}
+
+.button-box .button:nth-child(6) .icon {
+  animation: active 2.2s linear infinite;
+}
+
+.button-box .touch {
+  position: relative;
+  z-index: 60;
+  height: 100%;
+  flex: 1;
+  cursor: pointer;
+}
+
+.button-box .touch.left:hover~.button:nth-child(4) {
+  opacity: 1;
+  transform: translate(-170%, -50%) rotate(-90deg) scale(1.05);
+}
+
+.button-box .touch.left:hover~.button:nth-child(4) .icon {
+  width: 25px;
+  opacity: 0.9;
+}
+
+.button-box .touch.left:active~.button:nth-child(4) {
+  transform: translate(-170%, -50%) rotate(-90deg) scale(0.9);
+}
+
+.button-box .touch.right:hover~.button:nth-child(5) {
+  opacity: 1;
+  transform: translate(70%, -50%) rotate(90deg) scale(1.05);
+}
+
+.button-box .touch.right:hover~.button:nth-child(5) .icon {
+  width: 25px;
+  opacity: 0.9;
+}
+
+.button-box .touch.right:active~.button:nth-child(5) {
+  transform: translate(70%, -50%) rotate(90deg) scale(0.9);
+}
+
+.button-box .touch.middle:hover~.button:nth-child(6) {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
+}
+
+.button-box .touch.middle:hover~.button:nth-child(6) .icon {
+  width: 25px;
+  opacity: 0.9;
+}
+
+.button-box .touch.middle:active~.button:nth-child(6) {
+  transform: translate(-50%, -50%) rotate(0deg) scale(0.9);
+}
+
+.button-box:hover .button:nth-child(4) {
+  transform: translate(-170%, -50%) rotate(-90deg);
+}
+
+.button-box:hover .button:nth-child(5) {
+  transform: translate(70%, -50%) rotate(90deg);
+}
+
+.button-box:hover .button:nth-child(6) {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.button-box:hover .button:nth-child(6) .icon {
+  animation: active 4s linear infinite;
+}
+
+@keyframes active {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* Elegant Apple-like header */
+.pro-header {
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(135deg, #1d1d1f, #2c2c2f);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05),
+    0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hover-scale:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.ag-theme-quartz .agheader {
+  color: rgb(17, 17, 17) !important;
+  font-size: 17px !important;
+}
+
+#box-shadow {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle moving light streak */
+.pro-header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%);
+  transform: scale3d(-25deg);
+  animation: lightMove 12s infinite linear;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Smooth shimmer animation */
+@keyframes lightMove {
+  0% {
+    left: -80%;
+  }
+
+  100% {
+    left: 120%;
+  }
+}
+
+/* Optional subtle glow effect */
+.pro-header h4 i {
+  color: #00b4ff;
+  text-shadow: 0 0 8px rgba(0, 180, 255, 0.5);
+}
+
+// .custom-logo {
+//   width: 200px;
+//   height: 55px;
+//   object-fit: contain;
+
+// }
+.small-logo {
+  width: 140px;
+  height: 45px;
+  object-fit: contain;
+}
+
+
+.modal-header .btn-close .btn-close-white {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 9999;
+}
+
+.card-header .btn-close .btn-close-white {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 9999;
+}
+
+/* Fix react-bootstrap-typeahead clear button position */
+.rbt {
+  position: relative;
+}
+
+.rbt-clear-button {
+  position: absolute !important;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+
+.custom-tabs .nav-link {
+  padding: 12px 18px;
+  font-weight: 500;
+}
+
+.nav-link {
+  color: #2a2d34;
+  /* Default text color */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Smooth transition */
+}
+
+/* For active NavLink */
+.nav-link-active {
+  background: linear-gradient(65deg, rgba(#106FB2, 1) 10%, rgba(#106FB2, 1) 90%) !important;
+  // background-color: #2a2d34 !important; /* Change to your desired active background color */
+  color: #fff !important;
+  /* Change to your desired active text color */
+}
+
+/* For hover NavLink */
+.nav-link:hover {
+  background: linear-gradient(65deg, rgba(#106FB2, 1) 10%, rgba(#106FB2 , 1) 90%) !important;
+  color: #fff !important;
+  /* Change to your desired hover text color */
+}
+
+.nav-link:hover .nav-icon,
+.nav-link-active .nav-icon {
+  color: #fff !important;
+  /* Change this to your desired icon hover/active color */
+}
+
+.dropdown-item-custom {
+  border-radius: 0.5rem !important;
+  // margin: 0 0.5rem !important;
+  // transition: background-color 0.2s ease, transform 0.1s ease !important;
+}
+
+.dropdown-item-custom:hover {
+  background-color: #f1f3f5 !important;
+  // transform: translateX(2px) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+

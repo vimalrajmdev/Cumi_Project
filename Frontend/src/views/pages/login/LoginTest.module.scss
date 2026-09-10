@@ -1,0 +1,305 @@
+/* ────────────────────── GLOBAL KEYFRAMES ────────────────────── */
+:global {
+  @keyframes pulse {
+
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.2;
+    }
+
+    50% {
+      transform: translate(-50%, -50%) scale(1.1);
+      opacity: 0.4;
+    }
+  }
+
+  /* 🌊 Ripple wave expanding outward */
+  @keyframes rippleWave {
+    0% {
+      transform: translate(-50%, -50%) scale(0.3);
+      opacity: 0.9;
+    }
+
+    50% {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0.4;
+    }
+
+    100% {
+      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 0;
+    }
+  }
+}
+
+/* ────────────────────── APP CONTAINER ────────────────────── */
+.appContainer {
+  background: #eae3e3;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ────────────────────── BACKGROUND CIRCLES ────────────────────── */
+.bgCircles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Pulsing circles */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(7, 7, 7, 0.6);
+  opacity: 0.4;
+  animation: pulse 8s infinite ease-in-out;
+
+  &:nth-child(1) {
+    width: 600px;
+    height: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 0s;
+  }
+
+  &:nth-child(2) {
+    width: 800px;
+    height: 800px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 2s;
+  }
+}
+
+/* ────────────────────── RIPPLE WAVE BEAMS ────────────────────── */
+.waveBeam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(0, 255, 255, 0.45) 0%,
+      rgba(0, 255, 255, 0.2) 40%,
+      rgba(0, 255, 255, 0.1) 70%,
+      transparent 100%);
+  filter: blur(12px);
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  animation: rippleWave 6s infinite ease-out;
+}
+
+/* Delay each ripple to appear one after another */
+.waveBeam:nth-child(3) {
+  animation-delay: 0s;
+}
+
+.waveBeam:nth-child(4) {
+  animation-delay: 1.3s;
+}
+
+.waveBeam:nth-child(5) {
+  animation-delay: 2.6s;
+}
+
+/* ────────────────────── LOGIN CARD ────────────────────── */
+.loginContainer {
+  position: relative;
+  z-index: 2;
+  /* above background & waves */
+  background: rgba(66, 66, 66, 0.7);
+  backdrop-filter: blur(20px);
+  // Define variable
+  --logo-size: 180px;
+
+  background-image: url('../../../assets/images/apple.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: var(--logo-size); // Use variable
+  background-blend-mode: color-burn;
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(252, 250, 250, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: perspective(800px) rotateY(5deg) rotateX(-3deg) scale(1);
+    background: rgba(58, 58, 58, 0.75);
+    box-shadow: 0 30px 60px rgba(0, 255, 255, 0.347), 0 10px 20px rgba(0, 0, 0, 0.8);
+    
+    
+    --logo-size: 250px;
+
+  background-image: url('../../../assets/images/apple.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: var(--logo-size); // Use variable
+  background-blend-mode: color-burn;
+
+  }
+
+  @media (max-width: 480px) {
+    width: 90%;
+    padding: 32px 24px;
+  }
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  // background: #007AFF;
+  border-radius: 12px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100px;
+  }
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 32px;
+}
+
+.form {
+  margin-bottom: 16px;
+}
+
+.inputGroup {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(50, 50, 50, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s;
+
+  &:focus {
+    border-color: #007AFF;
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+  }
+}
+
+.appleBtn {
+  background: white;
+  color: black;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 12px;
+  gap: 10px;
+  margin: 24px 0 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  border: none;
+  font-size: 16px;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+}
+
+.divider {
+  position: relative;
+  margin: 20px 0;
+  color: #666;
+  font-size: 14px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, .1);
+  }
+
+  span {
+    background: rgba(30, 30, 30, .7);
+    padding: 0 12px;
+  }
+}
+
+.rfidBtn {
+  background: rgba(50, 50, 50, .8);
+  color: #0A84FF;
+  font-weight: 500;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(10, 132, 255, .3);
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(10, 132, 255, .15);
+    border-color: #0A84FF;
+  }
+}
+
+.waveIcon {
+  font-size: 18px;
+  animation: wave 2s infinite;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(10, 132, 255, .3);
+  transform: scale(0);
+  animation: ripple .6s linear;
+  pointer-events: none;
+}
+
+.version {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #666;
+}
+

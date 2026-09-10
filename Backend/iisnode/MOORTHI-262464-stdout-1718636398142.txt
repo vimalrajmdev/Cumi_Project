@@ -1,0 +1,6 @@
+http://localhost:5000/PrnFile.prn   \\DESKTOP-062Q6KU\Zebra ZD621R (300 dpi) - ZPL
+Server is connected \\.\pipe\8aa4fca3-1b20-4b2c-842e-0cdea3983537
+Connected to the database
+undefined
+undefined
+undefined

@@ -1,0 +1,7690 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Apple Asset Tracking API",
+    "description": "Web backend for the RFID asset-management application (port 3601). All endpoints except the public allowlist (login/password flows, RFID device endpoints, downloads) require a JWT: click Authorize and enter \"Bearer <token>\" using the token field from the POST /login response.",
+    "version": "5.1"
+  },
+  "host": "localhost:3601",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter: Bearer <token from POST /login>"
+    }
+  },
+  "paths": {
+    "/api/upload": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/get-lan-ip": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/download/{filename}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "description": "Validates the employee code + password and returns the JWT (token), the user profile (send) and the per-screen permissions (pagedata). Use the token for every other endpoint: Authorize with \"Bearer <token>\". Wrong password increments the login-attempt counter; the account locks after the configured attempt count.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Login credentials. ipAddress is recorded in the login history.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "EMP001"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "MyPassword@123"
+                },
+                "ipAddress": {
+                  "type": "string",
+                  "example": "192.168.1.10"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login success — token, user profile, page permissions"
+          },
+          "400": {
+            "description": "Invalid credentials or account locked"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": []
+      }
+    },
+    "/loginhistory": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "usercode": {
+                  "example": "any"
+                },
+                "username": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "ipAddress": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/changepassword": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change password (first login / voluntary change)",
+        "description": "Verifies the old password and stores the new one (bcrypt-hashed). Used by the first-time-login screen. Public: it authenticates via the old password itself.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "usercode": {
+                  "type": "string",
+                  "example": "EMP001"
+                },
+                "oldpassword": {
+                  "type": "string",
+                  "example": "OldPass@123"
+                },
+                "newpassword": {
+                  "type": "string",
+                  "example": "NewPass@123"
+                },
+                "confirmpassword": {
+                  "type": "string",
+                  "example": "NewPass@123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": []
+      }
+    },
+    "/ResetPassword": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "employeecode": {
+                  "example": "any"
+                },
+                "employeename": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/forgotpassword": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Forgot password — reset to default and mail it",
+        "description": "Verifies employee code + date of joining + email; on match, resets the password to the branch default and emails it to the user. Public (pre-login).",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "usercode": {
+                  "type": "string",
+                  "example": "EMP001"
+                },
+                "dateofjoin": {
+                  "type": "string",
+                  "example": "2024-01-15"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "user@company.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": []
+      }
+    },
+    "/ExpirePasswordRest": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "usercode": {
+                  "example": "any"
+                },
+                "oldpassword": {
+                  "example": "any"
+                },
+                "newpassword": {
+                  "example": "any"
+                },
+                "confirmpassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UserroleMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "userrole": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UserMainmasterRegister": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "employeecode": {
+                  "example": "any"
+                },
+                "employeename": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "dateofjoin": {
+                  "example": "any"
+                },
+                "UserStatus": {
+                  "example": "any"
+                },
+                "userrole": {
+                  "example": "any"
+                },
+                "department": {
+                  "example": "any"
+                },
+                "branchName": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/userMainMasterSelect": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/userMainMasterUpdate": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "updateddby": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "employeecode": {
+                  "example": "any"
+                },
+                "employeename": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "dateofjoin": {
+                  "example": "any"
+                },
+                "UserStatus": {
+                  "example": "any"
+                },
+                "userrole": {
+                  "example": "any"
+                },
+                "department": {
+                  "example": "any"
+                },
+                "branchName": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/pagemaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pageid": {
+                  "example": "any"
+                },
+                "pagename": {
+                  "example": "any"
+                },
+                "createby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RoleMapping": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pageid": {
+                  "example": "any"
+                },
+                "roleid": {
+                  "example": "any"
+                },
+                "createby": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Notification": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ApprovalPendingNotification": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/NotificationUpdate": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ReminderNotification": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DashboradDatas": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "branchid",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DashbordModelData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Help-Desk-Mail": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "example": "any"
+                },
+                "EmailId": {
+                  "example": "any"
+                },
+                "Comments": {
+                  "example": "any"
+                },
+                "ToMail": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/BranchMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "branchName": {
+                  "example": "any"
+                },
+                "ContactPerson": {
+                  "example": "any"
+                },
+                "ContactNumber": {
+                  "example": "any"
+                },
+                "EmailId": {
+                  "example": "any"
+                },
+                "Address": {
+                  "example": "any"
+                },
+                "City": {
+                  "example": "any"
+                },
+                "State": {
+                  "example": "any"
+                },
+                "Pincode": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "GSTNumber": {
+                  "example": "any"
+                },
+                "PANNumber": {
+                  "example": "any"
+                },
+                "BankName": {
+                  "example": "any"
+                },
+                "AccountNumber": {
+                  "example": "any"
+                },
+                "IFSCCode": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/NewRegister": {
+      "post": {
+        "tags": [
+          "Asset Register"
+        ],
+        "summary": "Register a new asset",
+        "description": "Creates an asset via the AssetRegisterMaster stored procedure. mode \"I\" inserts. Dates are dd-mm-yyyy or ISO strings; PCost is the purchase cost; AssetImg is the uploaded image path from POST /api/upload.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "example": "I"
+                },
+                "AssetID": {
+                  "type": "string",
+                  "example": "AST-0001"
+                },
+                "AssetName": {
+                  "type": "string",
+                  "example": "Dell Latitude 5440"
+                },
+                "Brand": {
+                  "type": "string",
+                  "example": "Dell"
+                },
+                "Model": {
+                  "type": "string",
+                  "example": "Latitude 5440"
+                },
+                "Category": {
+                  "type": "string",
+                  "example": "Laptop"
+                },
+                "SubCategory": {
+                  "type": "string",
+                  "example": "Workstation"
+                },
+                "Department": {
+                  "type": "string",
+                  "example": "IT"
+                },
+                "AssetType": {
+                  "type": "string",
+                  "example": "IT Asset"
+                },
+                "AssetGroupName": {
+                  "type": "string",
+                  "example": "Computers"
+                },
+                "PackageName": {
+                  "type": "string",
+                  "example": "Standard"
+                },
+                "VendorName": {
+                  "type": "string",
+                  "example": "ABC Suppliers"
+                },
+                "PhoneNumber": {
+                  "type": "string",
+                  "example": "9876543210"
+                },
+                "InvoiceNumber": {
+                  "type": "string",
+                  "example": "INV-2026-101"
+                },
+                "PDate": {
+                  "type": "string",
+                  "example": "2026-01-15"
+                },
+                "PCost": {
+                  "type": "number",
+                  "example": 85000
+                },
+                "WType": {
+                  "type": "string",
+                  "example": "Warranty"
+                },
+                "WPeriod": {
+                  "type": "string",
+                  "example": "36"
+                },
+                "WEndDate": {
+                  "type": "string",
+                  "example": "2029-01-15"
+                },
+                "Description": {
+                  "type": "string",
+                  "example": "Developer laptop"
+                },
+                "AssetImg": {
+                  "type": "string",
+                  "example": "uploads/image1736633398309.jpg"
+                },
+                "Movement": {
+                  "type": "string",
+                  "example": "Reg WithOut RFID"
+                },
+                "LinkID": {
+                  "type": "string",
+                  "example": ""
+                },
+                "LocationRFID": {
+                  "type": "string",
+                  "example": ""
+                },
+                "MaintainById": {
+                  "type": "string",
+                  "example": ""
+                },
+                "DepreciationType": {
+                  "type": "string",
+                  "example": "SLM"
+                },
+                "DepreciationMode": {
+                  "type": "string",
+                  "example": "Yearly"
+                },
+                "DepreciationValue": {
+                  "type": "number",
+                  "example": 10
+                },
+                "CreatedBy": {
+                  "type": "string",
+                  "example": "EMP001"
+                },
+                "CreatedDate": {
+                  "type": "string",
+                  "example": "2026-08-26"
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RegisterAssetInfo": {
+      "post": {
+        "tags": [
+          "Asset Register"
+        ],
+        "summary": "Full registered-asset list",
+        "description": "Returns every registered asset for the branch (assetInfo stored procedure). Large payload — the response is gzip-compressed.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateRegister": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "Brand": {
+                  "example": "any"
+                },
+                "Model": {
+                  "example": "any"
+                },
+                "Category": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "Department": {
+                  "example": "any"
+                },
+                "PDate": {
+                  "example": "any"
+                },
+                "PCost": {
+                  "example": "any"
+                },
+                "CreatedDate": {
+                  "example": "any"
+                },
+                "WType": {
+                  "example": "any"
+                },
+                "WPeriod": {
+                  "example": "any"
+                },
+                "WEndDate": {
+                  "example": "any"
+                },
+                "Description": {
+                  "example": "any"
+                },
+                "UpdatedBy": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "InvoiceNumber": {
+                  "example": "any"
+                },
+                "AssetImg": {
+                  "example": "any"
+                },
+                "VendorName": {
+                  "example": "any"
+                },
+                "PhoneNumber": {
+                  "example": "any"
+                },
+                "AssetType": {
+                  "example": "any"
+                },
+                "AssetGroupName": {
+                  "example": "any"
+                },
+                "PackageName": {
+                  "example": "any"
+                },
+                "MaintainById": {
+                  "example": "any"
+                },
+                "DepreciationType": {
+                  "example": "any"
+                },
+                "DepreciationMode": {
+                  "example": "any"
+                },
+                "DepreciationValue": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ViewRegister": {
+      "post": {
+        "tags": [
+          "Asset Register"
+        ],
+        "summary": "View registered assets",
+        "description": "Fetches registered asset rows via AssetRegisterMaster. mode \"S\" lists; pass an id to fetch a single asset (id \"\" for all).",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": ""
+                },
+                "mode": {
+                  "type": "string",
+                  "example": "S"
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DefectAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "SerialNumber": {
+                  "example": "any"
+                },
+                "Brand": {
+                  "example": "any"
+                },
+                "Model": {
+                  "example": "any"
+                },
+                "Category": {
+                  "example": "any"
+                },
+                "Vendors": {
+                  "example": "any"
+                },
+                "Defect": {
+                  "example": "any"
+                },
+                "Condition": {
+                  "example": "any"
+                },
+                "POnumber": {
+                  "example": "any"
+                },
+                "CreatedBy": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DefectAssetInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MapRfidtoAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ReMapRfidtoAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateRfid": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Activity": {
+                  "example": "any"
+                },
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "RFID": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "AssetMappedBy": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateWithoutRFID": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Activity": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "AssetMappedBy": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RemappedRfid": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "250": {
+            "description": ""
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/EnrolledAssetInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "departmentname": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/EnrolledAssetInfoPaged": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "startRow": {
+                  "example": "any"
+                },
+                "pageSize": {
+                  "example": "any"
+                },
+                "sortCol": {
+                  "example": "any"
+                },
+                "sortDir": {
+                  "example": "any"
+                },
+                "search": {
+                  "example": "any"
+                },
+                "filters": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ViewEnrolledAssets": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "departmentname": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/HandleEnterforReleasedAndMaintenace": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "AssetMapped": {
+                  "example": "any"
+                },
+                "MaintenanceDetails": {
+                  "example": "any"
+                },
+                "MappedBy": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/PendingAssetMaintenanceSearch": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateMaintenanceReg": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "Activity": {
+                  "example": "any"
+                },
+                "VendorID": {
+                  "example": "any"
+                },
+                "MaintenanceType": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "ScrapRegDate": {
+                  "example": "any"
+                },
+                "Description": {
+                  "example": "any"
+                },
+                "MaintenanceDetails": {
+                  "example": "any"
+                },
+                "RegisteredBy": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "DueDate": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/PrintMaintenanceAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "Activity": {
+                  "example": "any"
+                },
+                "VendorID": {
+                  "example": "any"
+                },
+                "MaintenanceType": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "ScrapRegDate": {
+                  "example": "any"
+                },
+                "Description": {
+                  "example": "any"
+                },
+                "MaintenanceDetails": {
+                  "example": "any"
+                },
+                "RegisteredBy": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "DueDate": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MovetoScrap": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "RegisteredBy": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/SearchUnderMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UnderMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MaintenanceDoneReg": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "Vendors": {
+                  "example": "any"
+                },
+                "MaintenanceInvoiceNumber": {
+                  "example": "any"
+                },
+                "MaintenanceCost": {
+                  "example": "any"
+                },
+                "Activity": {
+                  "example": "any"
+                },
+                "BranchName": {
+                  "example": "any"
+                },
+                "PhysicalLocation": {
+                  "example": "any"
+                },
+                "Description": {
+                  "example": "any"
+                },
+                "MaintenanceID": {
+                  "example": "any"
+                },
+                "MaintenanceRegDate": {
+                  "example": "any"
+                },
+                "MaintenanceDetails": {
+                  "example": "any"
+                },
+                "RegisteredBy": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "Movement": {
+                  "example": "any"
+                },
+                "LocationRFID": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/CompanyRegister": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyName": {
+                  "example": "any"
+                },
+                "IndustryType": {
+                  "example": "any"
+                },
+                "PostalCode": {
+                  "example": "any"
+                },
+                "CompanyUrl": {
+                  "example": "any"
+                },
+                "City": {
+                  "example": "any"
+                },
+                "State": {
+                  "example": "any"
+                },
+                "CompanyAddress": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchCompanyInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/LocationRegister": {
+      "post": {
+        "tags": [
+          "Masters"
+        ],
+        "summary": "Location master — create / update / list",
+        "description": "Manages RFID-tagged physical locations (building + floor + room + location tag). Common modes: I = insert, U = update, getLocation = list locations for dropdowns.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "example": "getLocation"
+                },
+                "Building": {
+                  "type": "string",
+                  "example": "Main Block"
+                },
+                "Floor": {
+                  "type": "string",
+                  "example": "3rd Floor"
+                },
+                "Room": {
+                  "type": "string",
+                  "example": "Server Room"
+                },
+                "LocationRFID": {
+                  "type": "string",
+                  "example": "E28011700000020F"
+                },
+                "LinkID": {
+                  "type": "string",
+                  "example": ""
+                },
+                "Createdby": {
+                  "type": "string",
+                  "example": "EMP001"
+                },
+                "Updatedby": {
+                  "type": "string",
+                  "example": ""
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchLocationList": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/SearchEditDetails": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "ID": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateLocation": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "branchName": {
+                  "example": "any"
+                },
+                "LocationRFID": {
+                  "example": "any"
+                },
+                "Location": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "ID": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RoomRegister": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Location": {
+                  "example": "any"
+                },
+                "Room": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchRoomList": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchCategory": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AddCategory": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Category": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchGivenData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CategoryID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateCategory": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Category": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "oldCategory": {
+                  "example": "any"
+                },
+                "oldSubCategory": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchDepartment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AddDepartment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Department": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchGivenDataDepartment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "DepartmentID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateDepartment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "DepartmentID": {
+                  "example": "any"
+                },
+                "Department": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "oldDepartment": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AddMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MaintenanceType": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchGivenDataMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MaintenanceID": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateMaintenance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MaintenanceID": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "MaintenanceType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchVendors": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/SaveVendors": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Address": {
+                  "example": "any"
+                },
+                "BankAccountNo": {
+                  "example": "any"
+                },
+                "City": {
+                  "example": "any"
+                },
+                "ContactPerson": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Email": {
+                  "example": "any"
+                },
+                "GSTNumber": {
+                  "example": "any"
+                },
+                "IFSC": {
+                  "example": "any"
+                },
+                "PAN": {
+                  "example": "any"
+                },
+                "PhoneNumber": {
+                  "example": "any"
+                },
+                "PostalCode": {
+                  "example": "any"
+                },
+                "State": {
+                  "example": "any"
+                },
+                "VendorID": {
+                  "example": "any"
+                },
+                "VendorName": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchGivenVendors": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "VendorID": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UpdateVendors": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Address": {
+                  "example": "any"
+                },
+                "BankAccountNo": {
+                  "example": "any"
+                },
+                "City": {
+                  "example": "any"
+                },
+                "ContactPerson": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "Email": {
+                  "example": "any"
+                },
+                "GSTNumber": {
+                  "example": "any"
+                },
+                "IFSC": {
+                  "example": "any"
+                },
+                "PAN": {
+                  "example": "any"
+                },
+                "PhoneNumber": {
+                  "example": "any"
+                },
+                "PostalCode": {
+                  "example": "any"
+                },
+                "State": {
+                  "example": "any"
+                },
+                "VendorID": {
+                  "example": "any"
+                },
+                "VendorName": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Readerstatus": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "example": "any"
+                },
+                "ReaderIP": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "LogTime": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Atennastatus": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "example": "any"
+                },
+                "ReaderIP": {
+                  "example": "any"
+                },
+                "AntennaID": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "Gain": {
+                  "example": "any"
+                },
+                "TransmitPower": {
+                  "example": "any"
+                },
+                "ReceiveSensitivity": {
+                  "example": "any"
+                },
+                "LogTime": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AntennaRSSI": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "example": "any"
+                },
+                "ReaderIP": {
+                  "example": "any"
+                },
+                "AntennaID": {
+                  "example": "any"
+                },
+                "MinRSSI": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/handleEnterforTransfer": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/InternalLocationTransfer": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "Location": {
+                  "example": "any"
+                },
+                "NewLocation": {
+                  "example": "any"
+                },
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "TransferedBy": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "Category": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ExternalLocationTransfer": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "TransferredBranchName": {
+                  "example": "any"
+                },
+                "Transferredbranchid": {
+                  "example": "any"
+                },
+                "ReceivedBranchName": {
+                  "example": "any"
+                },
+                "Receivedbranchid": {
+                  "example": "any"
+                },
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "Activity": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "AssetCost": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "TransferedBy": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                },
+                "TransferCost": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/PaymentHistory": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "TransferredBranchName": {
+                  "example": "any"
+                },
+                "Transferredbranchid": {
+                  "example": "any"
+                },
+                "ReceivedBranchName": {
+                  "example": "any"
+                },
+                "Receivedbranchid": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "TransferCost": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "TransferredBy": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "PaidAmount": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/InwardAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "TransferredBranchName": {
+                  "example": "any"
+                },
+                "Transferredbranchid": {
+                  "example": "any"
+                },
+                "ReceivedBranchName": {
+                  "example": "any"
+                },
+                "Receivedbranchid": {
+                  "example": "any"
+                },
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "Remarks": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "TransferCost": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Receivedby": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "PaidAmount": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "DCNo": {
+                  "example": "any"
+                },
+                "Location": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchAllDetails": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchPostMaintenanceDetails": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchCategorydata": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchSubCategorydata": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Category": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchLocation": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchPhysicalLocations": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "branchName": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/fetchDeparmentData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/dashboard/cards": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Dashboard summary cards",
+        "description": "Returns the four dashboard card groups in one call: assets (total / with RFID / without RFID + values), maintenance (under maintenance, due date crossed), scrap count and maintenance cost. Filtered by department, branch and branch access.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "departmentname": {
+                  "type": "string",
+                  "example": "IT"
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assetRegisterInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "UserStatus": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/WithRFIDcount": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/WithOutRFIDcount": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssignedAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UnderMaintenanceAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MaintenancCost": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Get_In_Out_data": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Dashboard movement lists",
+        "description": "Runs the Dashboard stored procedure for the given mode and returns the rows. Modes: SM = recent operations activity, SUM = unauthorized movements, FetchAuthdata = authorized movements, UM = unauthorized movements AND sends the alert mails (side effect — use with care). The dashboard normally receives this data pushed over the WebSocket /ws/dashboard.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "example": "SM"
+                },
+                "departmentname": {
+                  "type": "string",
+                  "example": "IT"
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Get_UnAuthorized_data": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DepreciationAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ScrapAssetList": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DepartmentWiseCountInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "UserStatus": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ChartDatas": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Dashboard donut-chart data",
+        "description": "Asset distribution counts for the dashboard charts. Modes: PackageCount (by package), GroupCount (by asset group), FloorCount (by floor). LocationRFID filters to one location; use \"All\" or \"\" for every location.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "example": "PackageCount"
+                },
+                "departmentname": {
+                  "type": "string",
+                  "example": "IT"
+                },
+                "branchid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "BranchAccess": {
+                  "type": "string",
+                  "example": "All"
+                },
+                "LocationRFID": {
+                  "type": "string",
+                  "example": "All"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/Rentaldata": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AuditForAsset": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/userAssetHavingInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UserUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetUploadData_Tvp_Method": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/unuploaded_data.xlsx": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/CategoryUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DepartmentUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/download/unuploaded_Category_data.xlsx": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/download/UnuploadedDepartMent.xlsx": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FetchScreenData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/InventoryReport": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fromDate": {
+                  "example": "any"
+                },
+                "LocationRFID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "Department": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/InventoryReport_new": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "FromDate": {
+                  "example": "any"
+                },
+                "ToDate": {
+                  "example": "any"
+                },
+                "LocationRFID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "Department": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/emailconfigsettings": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "frommail": {
+                  "example": "any"
+                },
+                "apppassword": {
+                  "example": "any"
+                },
+                "ServiceName": {
+                  "example": "any"
+                },
+                "HostName": {
+                  "example": "any"
+                },
+                "PortNumber": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "updateby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/othersetting": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "passwordexpireday": {
+                  "example": "any"
+                },
+                "autologouttime": {
+                  "example": "any"
+                },
+                "createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "LoginAttempCount": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "DefaultPassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getAssetCode": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Category": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AntennaConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "ReaderIP": {
+                  "example": "any"
+                },
+                "AntennaID": {
+                  "example": "any"
+                },
+                "TransmitPower": {
+                  "example": "any"
+                },
+                "ReceiveSensitivityIndex": {
+                  "example": "any"
+                },
+                "TransmitFrequencyIndex": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AntennaPowerLevelUpload": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "systemip": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DeviceRegisterInfo": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "SequenceNo": {
+                  "example": "any"
+                },
+                "BranchID": {
+                  "example": "any"
+                },
+                "DeviceID": {
+                  "example": "any"
+                },
+                "DeviceName": {
+                  "example": "any"
+                },
+                "Floor": {
+                  "example": "any"
+                },
+                "IPaddress": {
+                  "example": "any"
+                },
+                "MACaddress": {
+                  "example": "any"
+                },
+                "DeviceType": {
+                  "example": "any"
+                },
+                "ReaderType": {
+                  "example": "any"
+                },
+                "AllowDoorLock": {
+                  "example": "any"
+                },
+                "LockDoor": {
+                  "example": "any"
+                },
+                "Alarm": {
+                  "example": "any"
+                },
+                "ManufactureName": {
+                  "example": "any"
+                },
+                "LastSeqNumber": {
+                  "example": "any"
+                },
+                "Active": {
+                  "example": "any"
+                },
+                "AntennaID": {
+                  "example": "any"
+                },
+                "RoomType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DeveiceMasterUpload": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "systemip": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/BuildingMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Building": {
+                  "example": "any"
+                },
+                "BuildingId": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FloorMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Floor": {
+                  "example": "any"
+                },
+                "FloorId": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RoomMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Room": {
+                  "example": "any"
+                },
+                "RoomId": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetTypeMaster": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "AssetType": {
+                  "example": "any"
+                },
+                "AssetTypeId": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/IDgeneratorConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "CategoryName": {
+                  "example": "any"
+                },
+                "Prefix": {
+                  "example": "any"
+                },
+                "Suffix": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DepreciationConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "Depreciation": {
+                  "example": "any"
+                },
+                "salvageValue": {
+                  "example": "any"
+                },
+                "useLife": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "DepreciationId": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DepreciationUploadData": {
+      "post": {
+        "tags": [
+          "Masters"
+        ],
+        "summary": "Depreciation master — Excel import",
+        "description": "multipart/form-data: file (xlsx/csv with columns Depreciation, Use Life, Salvage Value), branchid, Createdby. Skipped rows come back as a downloadable error workbook.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/PackageConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "PackageId": {
+                  "example": "any"
+                },
+                "PackageName": {
+                  "example": "any"
+                },
+                "Category": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetGroupConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "GroupId": {
+                  "example": "any"
+                },
+                "GroupName": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MaintainedConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "MaintainId": {
+                  "example": "any"
+                },
+                "Maintained": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/BUnitCategoryConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "BUCategoryId": {
+                  "example": "any"
+                },
+                "BUCategoryName": {
+                  "example": "any"
+                },
+                "BUCategoryCode": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/BUnitConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "BUCategoryId": {
+                  "example": "any"
+                },
+                "BUnitCode": {
+                  "example": "any"
+                },
+                "BUnitName": {
+                  "example": "any"
+                },
+                "GSTIN": {
+                  "example": "any"
+                },
+                "PAN": {
+                  "example": "any"
+                },
+                "CIN": {
+                  "example": "any"
+                },
+                "Address1": {
+                  "example": "any"
+                },
+                "Address2": {
+                  "example": "any"
+                },
+                "Address3": {
+                  "example": "any"
+                },
+                "PinCode": {
+                  "example": "any"
+                },
+                "Email": {
+                  "example": "any"
+                },
+                "Contact": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "BUnitId": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RFIDJiofriends": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "device_imei": {
+                  "example": "any"
+                },
+                "latitude": {
+                  "example": "any"
+                },
+                "longitude": {
+                  "example": "any"
+                },
+                "timestamp": {
+                  "example": "any"
+                },
+                "device_battery_percentage": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/GETRFIDJiofriends": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/EmployeeConfig": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "Id": {
+                  "example": "any"
+                },
+                "Empid": {
+                  "example": "any"
+                },
+                "FirstName": {
+                  "example": "any"
+                },
+                "LastName": {
+                  "example": "any"
+                },
+                "DOJ": {
+                  "example": "any"
+                },
+                "DOB": {
+                  "example": "any"
+                },
+                "Department": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "Contact": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "Gender": {
+                  "example": "any"
+                },
+                "Photo": {
+                  "example": "any"
+                },
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "RFID": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/EmployeeUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "systemip": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AllocateAssets": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "EmployeeId": {
+                  "example": "any"
+                },
+                "RFIDnumber": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "AssetName": {
+                  "example": "any"
+                },
+                "EmployeeRFID": {
+                  "example": "any"
+                },
+                "LinkID": {
+                  "example": "any"
+                },
+                "AssetType": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/LabelPrint": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/LabelPrintLog": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "departmentname": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ReminderTypeAPI": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ReminderType": {
+                  "example": "any"
+                },
+                "ReminderTypeID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updateby": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ReminderSettingAPI": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Category": {
+                  "example": "any"
+                },
+                "SubCategory": {
+                  "example": "any"
+                },
+                "ReminderType": {
+                  "example": "any"
+                },
+                "ReminderTitle": {
+                  "example": "any"
+                },
+                "ReminderDays": {
+                  "example": "any"
+                },
+                "ReminderDescription": {
+                  "example": "any"
+                },
+                "ReminderMode": {
+                  "example": "any"
+                },
+                "ReminderStatus": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "Updatedby": {
+                  "example": "any"
+                },
+                "ReminderID": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/SchedulerSettingAPI": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "example": "any"
+                },
+                "AuditCode": {
+                  "example": "any"
+                },
+                "AuditType": {
+                  "example": "any"
+                },
+                "Fromdate": {
+                  "example": "any"
+                },
+                "Todate": {
+                  "example": "any"
+                },
+                "Status": {
+                  "example": "any"
+                },
+                "Mode": {
+                  "example": "any"
+                },
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                },
+                "BranchAccess": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/UploadAttachment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "AssetID": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/GetAttachments": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "AssetID": {
+                  "example": "any"
+                },
+                "mode": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/DeleteAttachment": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "attachmentId": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/CalculateDepreciation": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/BuildingUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/FloorUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/RoomUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/LocationUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetTypeMasterUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/PackageUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/AssetGroupUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MaintenanceTypeUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/VendorUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/IDGeneratorUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/MaintainedUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/ReminderTypeUploadData": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Createdby": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/GetInactiveStatus": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "mood": {
+                  "example": "any"
+                },
+                "branchid": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

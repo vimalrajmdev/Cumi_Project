@@ -1,0 +1,96 @@
+// Global responsive hardening (26-Aug-2026).
+// Conservative rules that make every screen behave on phone/tablet widths
+// without changing desktop layouts. Screen-specific overflow fixes live in
+// the individual view files; this file covers the common causes.
+
+// The page itself must never pan sideways — wide content scrolls inside its
+// own container instead (ag-grid and .table-responsive already do this).
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+// Media must shrink with its container.
+img,
+svg:not(.apexcharts-svg),
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+// Every ag-grid stretches to its container; the grid scrolls internally.
+[class*='ag-theme-'] {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+// ApexCharts: the chart container may be given a fixed pixel width by the
+// library on first render — cap it so donut charts fit phone screens.
+.apexcharts-canvas,
+.apexcharts-canvas svg {
+  max-width: 100%;
+}
+
+// Inputs, dropdowns and typeaheads never force their row wider than the view.
+.form-control,
+.form-select,
+.rbt,
+.rbt-input-main,
+.input-group {
+  max-width: 100%;
+}
+
+// Plain tables that are not wrapped in .table-responsive: allow the cell
+// content to wrap rather than widen the page.
+.table th,
+.table td {
+  word-break: break-word;
+}
+
+// Phones
+@media (max-width: 576px) {
+  // header notification/profile dropdowns: anchored panels hang off the left
+  // edge of a phone screen, so show them as a full-width panel under the
+  // header instead
+  .header .dropdown-menu.show {
+    position: fixed !important;
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    top: 60px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  // non-header dropdowns just get capped to the screen
+  .dropdown-menu {
+    max-width: calc(100vw - 1rem);
+  }
+
+  // modals use the full phone width
+  .modal-dialog {
+    margin: 0.5rem auto;
+    max-width: calc(100% - 1rem);
+  }
+
+  // tighter chrome so content gets the space
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  .container-lg,
+  .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  // toolbar/button rows stack instead of overflowing
+  .btn-toolbar,
+  .d-flex.gap-2:not(.flex-nowrap) {
+    flex-wrap: wrap;
+  }
+}
